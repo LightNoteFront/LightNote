@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>source/home/background.png</file>
+        <file>source/home/border.png</file>
+        <file>source/home/card.png</file>
+        <file>source/home/Line.png</file>
+        <file>source/home/menu.png</file>
+        <file>source/home/search.png</file>
+        <file>signalslot.qml</file>
+        <file>items.qml</file>
+        <file>source/icon/add.png</file>
+        <file>source/icon/arrows_down.png</file>
+        <file>source/icon/arrows_up.png</file>
+        <file>source/icon/back.png</file>
+        <file>source/icon/more.png</file>
+        <file>source/icon/note.png</file>
+        <file>source/icon/ok.png</file>
+    </qresource>
+</RCC>
