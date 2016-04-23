@@ -26,16 +26,16 @@ Window {
             anchors.left: parent.left
             delegate: Item {
                 width: 320
-                height: 56
+                height: fs * 2
                 Row {
                     id: mainCard
-                    //spacing: 10
                     Image {
                         width: 320
                         height: 480
                         visible: true
                         source: "source/home/card.png"
                         Text {
+                            font.pixelSize: fs
                             text: name
                         }
                     }
@@ -45,18 +45,22 @@ Window {
             model: ListModel {
                 ListElement {
                     name: "card1"
+                    fs: 12
                 }
 
                 ListElement {
                     name: "card2"
+                    fs: 24
                 }
 
                 ListElement {
                     name: "card3"
+                    fs: 38
                 }
 
                 ListElement {
                     name: "card4"
+                    fs: 438
                 }
             }
         }
@@ -76,8 +80,7 @@ Window {
 
             Image {
                 id: menu
-                anchors.right: parent.right
-                anchors.rightMargin: 279
+                width: 26
                 anchors.left: parent.left
                 anchors.leftMargin: 15
                 anchors.bottom: parent.bottom
@@ -89,8 +92,7 @@ Window {
 
             Image {
                 id: addNote
-                anchors.left: parent.left
-                anchors.leftMargin: 279
+                width: 26
                 anchors.top: parent.top
                 anchors.topMargin: 15
                 anchors.bottom: parent.bottom
@@ -116,7 +118,7 @@ Window {
                 Text {
                     id: text1
                     text: qsTr("Text")
-//                    style: Text.Center;
+                    //                    style: Text.Center;
                     anchors.right: parent.right
                     anchors.rightMargin: 0
                     anchors.left: parent.left
@@ -126,6 +128,28 @@ Window {
                     anchors.top: parent.top
                     anchors.topMargin: 0
                     font.pixelSize: 12
+                }
+
+                Row {
+                    id: row1
+                    opacity: 0.5
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 2
+
+                    Image {
+                        id: image1
+                        width: 16
+                        height: 16
+                        source: "source/home/search.png"
+                    }
+
+                    Text {
+                        id: text2
+                        color: "#ffffff"
+                        text: qsTr("搜索")
+                        font.pixelSize: 12
+                    }
                 }
             }
         }
