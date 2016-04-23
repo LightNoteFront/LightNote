@@ -7,6 +7,22 @@ Window {
     width: 320
     height: 568
 
+    function searchFocus(ths)
+    {
+        if (ths.id !== searchRec)
+        {
+            searchContent.focus = false;
+            if (searchContent.text === "")
+            {
+                searchLogo.visible = true;
+            }
+            else
+            {
+                searchContent.opacity = 0.5;
+            }
+        }
+    }
+
     Grid {
         id: grid1
         anchors.fill: parent
@@ -24,9 +40,16 @@ Window {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.left: parent.left
+            MouseArea {
+                anchors.fill: parent;
+                onClicked: {
+                    searchFocus(this);
+                }
+            }
+
             delegate: Item {
                 width: 320
-                height: fs * 2
+                height: 40
                 Row {
                     id: mainCard
                     Image {
@@ -34,10 +57,6 @@ Window {
                         height: 480
                         visible: true
                         source: "source/home/card.png"
-                        Text {
-                            font.pixelSize: fs
-                            text: name
-                        }
                     }
 
                 }
@@ -45,22 +64,14 @@ Window {
             model: ListModel {
                 ListElement {
                     name: "card1"
-                    fs: 12
                 }
 
                 ListElement {
                     name: "card2"
-                    fs: 24
                 }
 
                 ListElement {
                     name: "card3"
-                    fs: 38
-                }
-
-                ListElement {
-                    name: "card4"
-                    fs: 438
                 }
             }
         }
@@ -78,6 +89,12 @@ Window {
             anchors.top: parent.top
             anchors.topMargin: 0
 
+            MouseArea {
+                anchors.fill: parent;
+                onClicked: {
+                    searchFocus(this);
+                }
+            }
             Image {
                 id: menu
                 width: 26
@@ -114,24 +131,27 @@ Window {
                 anchors.bottomMargin: 15
                 anchors.top: parent.top
                 anchors.topMargin: 15
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: {
+                        searchLogo.visible = false;
+                        searchContent.focus = true;
+                        searchContent.opacity = 1.0;
+                    }
+                }
 
-                Text {
-                    id: text1
-                    text: qsTr("Text")
-                    //                    style: Text.Center;
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
-                    anchors.left: parent.left
-                    anchors.leftMargin: 0
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 0
-                    anchors.top: parent.top
-                    anchors.topMargin: 0
+                TextInput {
+                    id: searchContent
+                    y: 4
+                    text: qsTr("")
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: "#ffffff"
                     font.pixelSize: 12
                 }
 
                 Row {
-                    id: row1
+                    id: searchLogo
                     opacity: 0.5
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
