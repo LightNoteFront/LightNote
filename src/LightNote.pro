@@ -5,7 +5,8 @@ CONFIG += c++11
 
 SOURCES += main.cpp \
     note.cpp \
-    notelist.cpp
+    notelist.cpp \
+    webrequest.cpp
 
 RESOURCES += qml.qrc
 
@@ -17,5 +18,6 @@ include(deployment.pri)
 
 HEADERS += \
     note.h \
-    notelist.h
+    notelist.h \
+    webrequest.h
 

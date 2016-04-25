@@ -9,10 +9,10 @@ class Note : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString title MEMBER title NOTIFY titleChanged)
-    Q_PROPERTY(QString genre MEMBER genre NOTIFY genreChanged)
-    Q_PROPERTY(QStringList tags MEMBER tags NOTIFY tagsChanged)
-    Q_PROPERTY(QString text READ text NOTIFY textChanged)
+    Q_PROPERTY(QString title MEMBER title NOTIFY infoChanged)
+    Q_PROPERTY(QString genre MEMBER genre NOTIFY infoChanged)
+    Q_PROPERTY(QStringList tags MEMBER tags NOTIFY infoChanged)
+    Q_PROPERTY(QString text READ text NOTIFY infoChanged)
 
 public:
 
@@ -26,16 +26,13 @@ public:
     bool operator==(const Note& other);
 
     Q_INVOKABLE void setText(const QQuickTextDocument& doc);
-    QString text();
+    const QString& text();
 
     friend class NoteList;
 
 signals:
 
-    void titleChanged();
-    void genreChanged();
-    void tagsChanged();
-    void textChanged();
+    void infoChanged();
 
 public:
 

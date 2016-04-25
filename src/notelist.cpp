@@ -2,6 +2,7 @@
 
 NoteList::NoteList(QObject *parent)
     : QObject(parent)
+    , signalEnabled(true)
 {
 
 }
@@ -22,7 +23,9 @@ QStringList NoteList::getGenreList() const
     QSet<QString> genreSet;
     for(auto note : noteList)
         genreSet.insert(note->genre);
-    return genreSet.toList();
+    auto list = genreSet.toList();
+    qSort(list);
+    return list;
 }
 
 QList<QObject*> NoteList::getGenreNotes(QString genreName) const
@@ -48,8 +51,30 @@ Note* NoteList::createNote(QString genre, QString title)
     res->genre = genre;
     res->title = title;
     noteList.push_back(res);
-    emit notesChanged();
+    setNotesChanged();
+    connect(res, SIGNAL(infoChanged()), this, SLOT(setNotesChanged()));
     return res;
 }
+
+Note* NoteList::createNote(const QJsonObject& json)
+{
+    Note* res = new Note();
+    res->read(json);
+    noteList.push_back(res);
+    setNotesChanged();
+    connect(res, SIGNAL(infoChanged()), this, SLOT(setNotesChanged()));
+    return res;
+}
+
+void NoteList::setSignalEnabled(bool enabled)
+{
+    signalEnabled = enabled;
+}
+
+void NoteList::setNotesChanged()
+{
+    if(signalEnabled) emit notesChanged();
+}
+
 
 

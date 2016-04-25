@@ -24,14 +24,23 @@ public:
     Q_INVOKABLE QList<QObject*> getNotes() const;
 
     Q_INVOKABLE Note* createNote(QString genre = QString(), QString title = QString());
+    Q_INVOKABLE Note* createNote(const QJsonObject &json);
+
+    void setSignalEnabled(bool enabled);
 
 signals:
 
     void notesChanged();
 
+protected slots:
+
+    void setNotesChanged();
+
 protected:
 
     QList<Note*> noteList;
+
+    bool signalEnabled;
 
 };
 
