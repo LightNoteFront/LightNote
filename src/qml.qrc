@@ -2,5 +2,9 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>test.qml</file>
+        <file>../img/card/newCard.png</file>
+        <file>../img/title/menu.png</file>
+        <file>../img/title/search.png</file>
+        <file>../img/title/addNote.png</file>
     </qresource>
 </RCC>

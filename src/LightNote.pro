@@ -19,3 +19,5 @@ HEADERS += \
     note.h \
     notelist.h
 
+DISTFILES +=
+

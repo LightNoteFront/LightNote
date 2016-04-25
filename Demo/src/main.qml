@@ -23,16 +23,6 @@ Window {
         }
     }
 
-    function openCard(ths)
-    {
-        var str = ""
-//        for (var i; i < cardModel.count; i++)
-//        {
-//            //if (ths.)
-//        }
-        return ths.toString()
-    }
-
     Item {
         id: scene
 
