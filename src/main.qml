@@ -8,16 +8,6 @@ Window {
     width: 320
     height: 568
 
-    /*
-    onHeightChanged: {
-        console.log("height:" + mainWindow.height)
-    }
-
-    onWidthChanged: {
-        console.log("width:" + mainWindow.width)
-    }
-    */
-
     function setSearchFocus(ths)
     {
         if (ths.id !== searchMous)
@@ -44,20 +34,6 @@ Window {
             anchors.fill: parent
             color: "#262626"
         }
-
-        /*test qml
-        Item {
-            anchors.top: parent.top
-            anchors.topMargin: 45
-            anchors.right: parent.right
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            Loader {
-                source: "test.qml"
-            }
-        }
-
-        //test qml*/
 
         ListView {
             id: cardList
@@ -251,11 +227,9 @@ Window {
                 }
             }
         }
-<<<<<<< HEAD
-=======
     }
 
-    Item {
+    /*Item {
         id: testItem
         anchors.fill: parent
         Loader {
@@ -286,8 +260,7 @@ Window {
 
         }
 
->>>>>>> 8cdb0cc6d412118dd42d0ba504eef782857ec56c
-    }
+    }*/
 
 }
 

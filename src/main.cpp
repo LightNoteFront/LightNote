@@ -11,7 +11,6 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     NoteList notes;
-<<<<<<< HEAD
     notes.createNote("软件项目管理", "写文档");
     notes.createNote("软件项目管理", "写代码");
     notes.createNote("软件项目管理", "做测试");
@@ -19,17 +18,8 @@ int main(int argc, char *argv[])
     notes.createNote("编译原理", "预习笔记！！！");
     notes.createNote("编译原理", "写作业");
     notes.createNote("编译原理", "张天利是个辣鸡");
-=======
 
     // 程序增加笔记
-    notes.createNote("A", "ok");
-    notes.createNote("A", "1");
-    notes.createNote("A", "2");
-    notes.createNote("C", "3");
-    notes.createNote("C", "4");
-    notes.createNote("B", "5");
-    notes.createNote("C", "6");
->>>>>>> 8cdb0cc6d412118dd42d0ba504eef782857ec56c
 
     // 文件增加笔记
     QFile file("out.json");

@@ -13,21 +13,6 @@ Item {
         model: notes.genreList
 
         delegate: Item {
-<<<<<<< HEAD
-            width: mainWindow.width
-            height: (mainWindow.height - 45)// * 2
-
-            Rectangle {
-                width: mainWindow.width
-                height: mainWindow.height - 45
-                radius: 8
-                color: "white"
-                border.color: "#8C8C8C"
-                border.width: 1
-                Text {
-                    text: modelData
-                    anchors.horizontalCenter: parent.horizontalCenter
-=======
 
             id: itemView
 
@@ -66,7 +51,6 @@ Item {
                     onNotesChanged: {
                         noteListView.model = notes.getGenreNotes(modelData);
                     }
->>>>>>> 8cdb0cc6d412118dd42d0ba504eef782857ec56c
                 }
                 ListView {
                     id: noteListView
