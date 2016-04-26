@@ -21,3 +21,5 @@ HEADERS += \
     notelist.h \
     webrequest.h
 
+DISTFILES +=
+
