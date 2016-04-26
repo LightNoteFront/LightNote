@@ -1,7 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Window 2.2
 
-
 Window {
     visible: true
 
@@ -9,8 +8,6 @@ Window {
     width: 300
 
     id: win
-
-    var testGlobal = 114514;
 
     MouseArea {
         anchors.fill: parent

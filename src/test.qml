@@ -4,11 +4,6 @@ Item {
     width: 300
     height: 300
 
-    Text {
-        text: testGlobal
-        anchors.right: parent.right
-    }
-
     ListView {
 
         id: listView1
@@ -112,7 +107,7 @@ Item {
                                     for (var i = 0; i < len; i++) {
                                         listViewWidth += tagListView.children[i].width;
                                     }
-                                    console.log(textTitle.text, listViewWidth);
+                                    //console.log(textTitle.text, listViewWidth);
                                     tagListView.width = listViewWidth;
                                 }
 
