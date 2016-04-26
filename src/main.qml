@@ -239,7 +239,7 @@ Window {
         anchors.fill: parent
         Loader {
             id: testLoader
-            source: "test.qml"
+            source: "edit.qml"
             anchors.fill: parent
         }
         Rectangle {

@@ -6,5 +6,9 @@
         <file>../img/title/menu.png</file>
         <file>../img/title/search.png</file>
         <file>../img/title/addNote.png</file>
+        <file>edit.qml</file>
+        <file>img/edit/back.png</file>
+        <file>img/edit/edit.png</file>
+        <file>img/edit/ok.png</file>
     </qresource>
 </RCC>
