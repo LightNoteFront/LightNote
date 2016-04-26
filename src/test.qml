@@ -9,39 +9,26 @@ Item {
 
         anchors.fill: parent
 
-        spacing: -1
-
         model: notes.genreList
 
         delegate: Item {
+            width: mainWindow.width
+            height: (mainWindow.height - 45)// * 2
 
-            width: 60
-            height: noteListView.height
-
-            Row {
-                id: row1
-                spacing: 0
-
-                Rectangle {
-                    width: 40
-                    height: noteListView.height
-                    color: "blue"
-
-                    border.width: 1
-                    border.color: "black"
-
-                    Text {
-                        x: 2
-                        text: modelData
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
+            Rectangle {
+                width: mainWindow.width
+                height: mainWindow.height - 45
+                radius: 8
+                color: "white"
+                border.color: "#8C8C8C"
+                border.width: 1
+                Text {
+                    text: modelData
+                    anchors.horizontalCenter: parent.horizontalCenter
                 }
-
                 ListView {
-
                     id: noteListView
-                    width: 60
+                    width: parent.width
                     height: 20*noteListView.count
 
                     model: notes.getGenreNotes(modelData)
@@ -60,7 +47,9 @@ Item {
                 }
 
             }
+
         }
+        spacing: -(((mainWindow.height - 45) * 1) - 60)
 
     }
 

@@ -43,6 +43,86 @@ Window {
             color: "#262626"
         }
 
+        /*test qml
+        Item {
+            anchors.top: parent.top
+            anchors.topMargin: 45
+            anchors.right: parent.right
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            Loader {
+                source: "test.qml"
+            }
+        }
+
+        //test qml*/
+
+        ListView {
+            id: cardList
+            anchors.top: parent.top
+            anchors.topMargin: 45
+            anchors.right: parent.right
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+
+            model: notes.genreList
+
+            delegate: Item {
+                width: mainWindow.width
+                height: (mainWindow.height - 45)// * 2
+
+                Rectangle {
+                    width: mainWindow.width
+                    height: mainWindow.height - 45
+                    radius: 8
+                    color: "white"
+                    border.color: "#8C8C8C"
+                    border.width: 1
+                    Text {
+                        x: mainWindow.width * 0.5 * 0.3
+                        y: 5
+                        text: modelData
+                        color: "red"//之后换成notes内的classcolor接口
+                        font.pixelSize: 18
+                    }
+                    Text {
+                        x: mainWindow.width * 0.5 * 0.3
+                        y: 30
+                        text: noteListView.count + "项笔记"
+                        color: "blue"//之后换成notes内的classcolor接口
+                        font.pixelSize: 12
+                    }
+                    Rectangle {
+                        y: 50
+                        width: mainWindow.width
+                        height: 1
+                        opacity: 0.2
+                        color: "black"
+                    }
+
+                    ListView {
+                        x: mainWindow.width * 0.5 * 0.3
+                        y: 60
+                        id: noteListView
+                        height: 20*noteListView.count
+
+                        model: notes.getGenreNotes(modelData)
+
+                        delegate: Item {
+                            width: 60
+                            height: 20
+                            Text {
+                                x: 2
+                                text: modelData.title
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+                        }
+                    }
+                }
+            }
+            spacing: -(((mainWindow.height - 45) * 1) - 50)
+        }
+
         Item {
             id: titleItem
             anchors.bottom: parent.bottom
@@ -50,6 +130,12 @@ Window {
             anchors.right: parent.right
             anchors.left: parent.left
             anchors.top: parent.top
+
+            Rectangle {
+                id: titleRect
+                anchors.fill: parent
+                color: "#262626"
+            }
 
             Image {
                 id: menuImag
@@ -77,12 +163,12 @@ Window {
                 anchors.top: parent.top
 
                 MouseArea {
-                    id: searchMous
                     anchors.fill: parent
                     onClicked: {
                         searchLogo.visible = false
                         searchContent.focus = true
                         searchContent.opacity = 1.0
+                        searchFocusItem.y = 45
                     }
 
                 }
@@ -133,41 +219,36 @@ Window {
             }
         }
 
-        ListView {
-            id: listView1
-            anchors.top: titleItem.bottom
+        Item {
+            id: searchFocusItem
+            opacity: 0.5
+            y: mainWindow.height
+            height: mainWindow.height - 45
             anchors.right: parent.right
             anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            model: ListModel {
-                ListElement {
-                    name: "Grey"
-                    colorCode: "grey"
-                }
-            }
-            delegate: Item {
-                x: 5
-                width: 80
-                height: 40
-                Row {
-                    id: row1
-                    Rectangle {
-                        width: 40
-                        height: 40
-                        color: colorCode
-                    }
 
-                    Text {
-                        text: name
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.bold: true
+            Rectangle {
+                id: searchFocusRect
+                color: "#262626"
+                anchors.fill: parent
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    searchFocusItem.y = mainWindow.height
+                    searchContent.focus = false
+                    if (searchContent.text === "")
+                    {
+                        searchLogo.visible = true
                     }
-                    spacing: 10
+                    else
+                    {
+                        searchContent.opacity = 0.5
+                    }
                 }
             }
         }
-
-
     }
 }
 
