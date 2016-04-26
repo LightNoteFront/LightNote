@@ -58,20 +58,20 @@ Window {
                     border.width: 1
                     Text {
                         x: mainWindow.width * 0.5 * 0.3
-                        y: 5
+                        y: 10
                         text: modelData
                         color: "red"//之后换成notes内的classcolor接口
                         font.pixelSize: 18
                     }
                     Text {
                         x: mainWindow.width * 0.5 * 0.3
-                        y: 30
+                        y: 35
                         text: noteListView.count + "项笔记"
                         color: "blue"//之后换成notes内的classcolor接口
                         font.pixelSize: 12
                     }
                     Rectangle {
-                        y: 50
+                        y: 55
                         width: mainWindow.width
                         height: 1
                         opacity: 0.2
@@ -80,11 +80,12 @@ Window {
 
                     ListView {
                         x: mainWindow.width * 0.5 * 0.3
-                        y: 60
+                        y: 65
                         id: noteListView
                         height: 20*noteListView.count
 
                         model: notes.getGenreNotes(modelData)
+                        spacing: 5
 
                         delegate: Item {
                             width: 60
