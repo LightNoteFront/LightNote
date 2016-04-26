@@ -8,6 +8,7 @@ Window {
     width: 320
     height: 568
 
+    /*
     onHeightChanged: {
         console.log("height:" + mainWindow.height)
     }
@@ -15,6 +16,7 @@ Window {
     onWidthChanged: {
         console.log("width:" + mainWindow.width)
     }
+    */
 
     function setSearchFocus(ths)
     {
@@ -249,6 +251,43 @@ Window {
                 }
             }
         }
+<<<<<<< HEAD
+=======
     }
+
+    Item {
+        id: testItem
+        anchors.fill: parent
+        Loader {
+            id: testLoader
+            source: "test.qml"
+            anchors.fill: parent
+        }
+        Rectangle {
+            width: 20
+            height: 20
+            color: "black"
+            anchors.top: parent.top
+            anchors.right: parent.right
+
+            Text {
+                anchors.centerIn: parent
+                text: "×"
+                color: "white"
+                font.pixelSize: 18
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    testItem.visible = false;
+                }
+            }
+
+        }
+
+>>>>>>> 8cdb0cc6d412118dd42d0ba504eef782857ec56c
+    }
+
 }
 
