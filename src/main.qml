@@ -43,7 +43,7 @@ Window {
             anchors.left: parent.left
             anchors.bottom: parent.bottom
 
-            model: notes.genreList
+            model: [1].concat(notes.genreList)
 
             delegate: Item {
                 width: mainWindow.width
@@ -59,11 +59,12 @@ Window {
                     Text {
                         x: mainWindow.width * 0.5 * 0.3
                         y: 10
-                        text: modelData
+                        text: modelData == 1 ? "新建项目" : modelData
                         color: "red"//之后换成notes内的classcolor接口
                         font.pixelSize: 18
                     }
                     Text {
+                        visible: modelData != 1
                         x: mainWindow.width * 0.5 * 0.3
                         y: 35
                         text: noteListView.count + "项笔记"
@@ -79,6 +80,9 @@ Window {
                     }
 
                     ListView {
+
+                        visible: modelData != 1
+
                         x: mainWindow.width * 0.5 * 0.3
                         y: 65
                         id: noteListView
