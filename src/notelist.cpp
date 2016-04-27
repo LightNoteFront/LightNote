@@ -3,6 +3,7 @@
 NoteList::NoteList(QObject *parent)
     : QObject(parent)
     , currentNote(nullptr)
+    , emptyNote(nullptr)
     , signalEnabled(true)
 {
 
@@ -25,12 +26,14 @@ void NoteList::sync()
 
 QStringList NoteList::getGenreList() const
 {
-    QSet<QString> genreSet;
-    for(auto note : noteList)
-        genreSet.insert(note->genre);
     auto list = genreSet.toList();
     qSort(list);
     return list;
+}
+
+void NoteList::addGenre(QString genre)
+{
+    genreSet.insert(genre);
 }
 
 QList<QObject*> NoteList::getGenreNotes(QString genreName) const
@@ -55,7 +58,8 @@ Note* NoteList::createNote(QString genre, QString title)
     Note* res = new Note();
     res->genre = genre;
     res->title = title;
-    noteList.push_back(res);
+    noteList.append(res);
+    genreSet.insert(genre);
     setNotesChanged();
     connect(res, SIGNAL(infoChanged()), this, SLOT(setNotesChanged()));
     return res;
@@ -65,7 +69,8 @@ Note* NoteList::createNote(const QJsonObject& json)
 {
     Note* res = new Note();
     res->read(json);
-    noteList.push_back(res);
+    noteList.append(res);
+    genreSet.insert(res->genre);
     setNotesChanged();
     connect(res, SIGNAL(infoChanged()), this, SLOT(setNotesChanged()));
     return res;
@@ -81,17 +86,17 @@ Note* NoteList::getCurrentNote() const
     return currentNote;
 }
 
-void NoteList::setCurrentNote(QObject* note)
+void NoteList::setCurrentNote(Note* note)
 {
-    Note* p = nullptr;
-    if(note != nullptr && (p = dynamic_cast<Note*>(note)) == nullptr)
-        return;
-    currentNote = p;
+    noteList.removeAll(note);
+    currentNote = note;
     emit currentNoteChanged();
 }
 
 Note* NoteList::createEmptyNote()
 {
+    if(emptyNote != nullptr)
+        delete emptyNote;
     emptyNote = new Note(this);
     currentNote = emptyNote;
     return emptyNote;
@@ -107,6 +112,16 @@ void NoteList::saveNote()
         emptyNote = nullptr;
     }
     currentNote->validate();
+    genreSet.insert(currentNote->genre);
+    setNotesChanged();
+}
+
+void NoteList::saveNote(Note* note)
+{
+    if(note == nullptr)
+        return;
+    note->validate();
+    genreSet.insert(note->genre);
     setNotesChanged();
 }
 
