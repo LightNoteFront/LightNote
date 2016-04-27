@@ -2,6 +2,7 @@
 
 NoteList::NoteList(QObject *parent)
     : QObject(parent)
+    , currentNote(nullptr)
     , signalEnabled(true)
 {
 
@@ -15,7 +16,11 @@ NoteList::~NoteList()
 
 void NoteList::sync()
 {
-    emit notesChanged();
+    currentNote = nullptr;
+    emit currentNoteChanged();
+
+
+    setNotesChanged();
 }
 
 QStringList NoteList::getGenreList() const
@@ -71,9 +76,44 @@ void NoteList::setSignalEnabled(bool enabled)
     signalEnabled = enabled;
 }
 
+Note* NoteList::getCurrentNote() const
+{
+    return currentNote;
+}
+
+void NoteList::setCurrentNote(QObject* note)
+{
+    Note* p = nullptr;
+    if(note != nullptr && (p = dynamic_cast<Note*>(note)) == nullptr)
+        return;
+    currentNote = p;
+    emit currentNoteChanged();
+}
+
+Note* NoteList::createEmptyNote()
+{
+    emptyNote = new Note(this);
+    currentNote = emptyNote;
+    return emptyNote;
+}
+
+void NoteList::saveNote()
+{
+    if(currentNote == nullptr)
+        return;
+    if(emptyNote == currentNote)
+    {
+        noteList.append(emptyNote);
+        emptyNote = nullptr;
+    }
+    currentNote->validate();
+    setNotesChanged();
+}
+
 void NoteList::setNotesChanged()
 {
-    if(signalEnabled) emit notesChanged();
+    if(signalEnabled)
+        emit notesChanged();
 }
 
 

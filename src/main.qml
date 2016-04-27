@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtQuick.Window 2.2
 
 Window {
+
     visible: true
 
     id: mainWindow
@@ -199,6 +200,14 @@ Window {
                 anchors.right: parent.right
                 anchors.rightMargin: 20
                 source: "../img/title/addNote.png"
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        subItem.loadUI("edit.qml");
+                    }
+                }
+
             }
         }
 
@@ -234,15 +243,69 @@ Window {
         }
     }
 
-    /*Item {
-        id: testItem
-        anchors.fill: parent
+    Item {
+        id: subItem
+
+        height: parent.height
+        width: parent.width
+        x: 0
+
+        state: "closed"
+        states: [
+            State {
+                name: "opened"
+                PropertyChanges { target: subItem; x: 0; visible: true; enabled: true }
+            },
+            State {
+                name: "closed"
+                PropertyChanges { target: subItem; x: parent.width; visible: false; enabled: false }
+            }
+        ]
+
+        transitions: [
+            Transition {
+                from: "opened"
+                to: "closed"
+                SequentialAnimation {
+                    PropertyAction { property: "enabled"; value: false }
+                    PropertyAnimation { duration: 100; properties: "x"; easing.type: Easing.Linear }
+                    PropertyAction { property: "visible"; value: false }
+                }
+            },
+            Transition {
+                from: "closed"
+                to: "opened"
+                SequentialAnimation {
+                    PropertyAction { property: "visible"; value: true }
+                    PropertyAnimation { duration: 100; properties: "x"; easing.type: Easing.Linear }
+                    PropertyAction { property: "enabled"; value: true }
+                }
+            }
+        ]
+
+        function loadUI(url)
+        {
+            testLoader.source = url;
+            subItem.state = "opened";
+        }
+
         Loader {
             id: testLoader
-            source: "edit.qml"
+            //source: "edit.qml"
             anchors.fill: parent
         }
+
+        Connections {
+            target: testLoader.item
+            onExit: {
+                subItem.enabled = false;
+                subItem.state = "closed";
+            }
+        }
+
         Rectangle {
+            visible: false
+
             width: 20
             height: 20
             color: "black"
@@ -259,13 +322,14 @@ Window {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    testItem.visible = false;
+                    subItem.enabled = false;
+                    subItem.state = "closed";
                 }
             }
 
         }
 
-    }*/
+    }
 
 }
 

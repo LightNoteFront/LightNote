@@ -19,8 +19,6 @@ int main(int argc, char *argv[])
     notes.createNote("编译原理", "写作业");
     notes.createNote("编译原理", "张天利是个辣鸡");
 
-    // 程序增加笔记
-
     // 文件增加笔记
     QFile file("out.json");
     if(file.open(QFile::ReadOnly))
@@ -41,16 +39,9 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     QQmlContext *context=engine.rootContext();
 
-    QStringList testList;
-    testList << "asdasd" << "dsadsa" << "hahaha" << "123456" << "asdasdasdasd";
-    testList << "asdasd" << "dsadsa" << "hahaha" << "123456" << "asdasdasdasd";
-    testList << "asdasd" << "dsadsa" << "hahaha" << "123456" << "asdasdasdasd";
-    testList << "asdasd" << "dsadsa" << "hahaha" << "123456" << "asdasdasdasd";
-    testList << "asdasd" << "dsadsa" << "hahaha" << "123456" << "asdasdasdasd";
-    testList << "asdasd" << "dsadsa" << "hahaha" << "123456" << "asdasdasdasd";
+    qmlRegisterType<Note>("LightNote.Note", 1, 0, "Note");
 
     context->setContextProperty("notes", &notes);
-    context->setContextProperty("testList", QVariant::fromValue(testList));
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
