@@ -28,13 +28,15 @@ public:
     Q_INVOKABLE void setText(const QQuickTextDocument& doc);
     const QString& text();
 
+    Q_INVOKABLE void validate();
+
     friend class NoteList;
 
 signals:
 
     void infoChanged();
 
-public:
+protected:
 
     QString webId; // 网络索引id，用于标记笔记是否对应服务器上的笔记记录，新建时为空
 
@@ -42,6 +44,8 @@ public:
 
     QString genre;
     QStringList tags;
+
+    QString authorId;
 
     QString content; // QT rich text以默认形式格式化存储的笔记本体内容
 
