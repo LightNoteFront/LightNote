@@ -20,75 +20,132 @@ Window {
             color: "#262626"
         }
 
-        ListView {
-            id: cardList
-            anchors.top: parent.top
-            anchors.topMargin: 45
+        Item {
+            id: itemCardList
+
+            height: mainWindow.height - 45
             anchors.right: parent.right
             anchors.left: parent.left
             anchors.bottom: parent.bottom
 
-            model: [1].concat(notes.genreList)
+            ListView {
 
-            delegate: Item {
-                width: mainWindow.width
-                height: (mainWindow.height - 45)// * 2
+                id: cardList
 
-                Rectangle {
-                    width: mainWindow.width
-                    height: mainWindow.height - 45
-                    radius: 8
-                    color: "white"
-                    border.color: "#8C8C8C"
-                    border.width: 1
-                    Text {
-                        x: mainWindow.width * 0.5 * 0.3
-                        y: 10
-                        text: modelData == 1 ? "新建项目" : modelData
-                        color: "red"//之后换成notes内的classcolor接口
-                        font.pixelSize: 18
+                property variant selectedGenre: null
+                property double foldAnim: 0
+
+                function setSelected(genre)
+                {
+                    if(genre !== null)
+                        selectedGenre = genre;
+                    state = (genre === null ? "folded" : "opened");
+                }
+
+                anchors.fill: parent
+
+                anchors.bottomMargin: -(itemCardList.height - 50 + 45 * foldAnim)
+                spacing: -(itemCardList.height - 50 + 45 * foldAnim)
+
+                state: "folded"
+                states: [
+                    State {
+                        name: "folded"
+                        PropertyChanges { target: cardList; foldAnim: 0}
+                    },
+                    State {
+                        name: "opened"
+                        PropertyChanges { target: cardList; foldAnim: 1}
                     }
-                    Text {
-                        visible: modelData != 1
-                        x: mainWindow.width * 0.5 * 0.3
-                        y: 35
-                        text: noteListView.count + "项笔记"
-                        color: "blue"//之后换成notes内的classcolor接口
-                        font.pixelSize: 12
+                ]
+
+                transitions: [
+                    Transition {
+                        to: "*"
+                        PropertyAnimation { duration: 200; properties: "foldAnim"; easing.type: Easing.InOutQuad }
                     }
+                ]
+
+                model: [1].concat(notes.genreList)
+
+                delegate: Item {
+                    width: itemCardList.width
+                    height: itemCardList.height * 1 +
+                            (cardList.selectedGenre==modelData ? (itemCardList.height - 20) * cardList.foldAnim : 0);
+
                     Rectangle {
-                        y: 55
-                        width: mainWindow.width
-                        height: 1
-                        opacity: 0.2
-                        color: "black"
-                    }
+                        width: itemCardList.width
+                        height: itemCardList.height
+                        radius: 8
+                        color: "white"
+                        border.color: "#8C8C8C"
+                        border.width: 1
 
-                    ListView {
+                        Text {
+                            x: parent.width * 0.5 * 0.3
+                            y: 10
+                            text: modelData == 1 ? "新建项目" : modelData
+                            color: "red"//之后换成notes内的classcolor接口
+                            font.pixelSize: 18
+                        }
+                        Text {
+                            visible: modelData != 1
+                            x: parent.width * 0.5 * 0.3
+                            y: 35
+                            text: noteListView.count + "项笔记"
+                            color: "blue"//之后换成notes内的classcolor接口
+                            font.pixelSize: 12
+                        }
+                        Rectangle {
+                            y: 55
+                            width: parent.width
+                            height: 1
+                            opacity: 0.2
+                            color: "black"
+                        }
 
-                        visible: modelData != 1
+                        MouseArea {
+                            height: 55
+                            width: parent.width
+                            onClicked: {
+                                if(modelData == 1)
+                                {
+                                    // 新建项目
+                                }
+                                else
+                                {
+                                    cardList.setSelected(cardList.state=="opened" ? null : modelData);
+                                }
+                            }
+                        }
 
-                        x: mainWindow.width * 0.5 * 0.3
-                        y: 65
-                        id: noteListView
-                        height: 20*noteListView.count
+                        ListView {
 
-                        model: notes.getGenreNotes(modelData)
-                        spacing: 5
+                            visible: modelData == cardList.selectedGenre
+                            opacity: cardList.foldAnim
 
-                        delegate: Item {
-                            width: 60
-                            height: 20
-                            Text {
-                                x: 2
-                                text: modelData.title
-                                anchors.verticalCenter: parent.verticalCenter
+                            x: parent.width * 0.5 * 0.3
+                            y: 65
+                            id: noteListView
+                            height: 20*noteListView.count
+
+                            model: notes.getGenreNotes(modelData)
+                            spacing: 5
+
+                            delegate: Item {
+                                width: 60
+                                height: 20
+                                Text {
+                                    x: 2
+                                    text: modelData.title
+                                    anchors.verticalCenter: parent.verticalCenter
+                                }
                             }
                         }
                     }
                 }
+
             }
-            spacing: -(((mainWindow.height - 45) * 1) - 50)
         }
 
         Item {
@@ -195,6 +252,7 @@ Window {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
+                        notes.currentNote = null;
                         subItem.loadUI("edit.qml");
                     }
                 }
