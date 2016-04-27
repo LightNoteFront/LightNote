@@ -140,6 +140,13 @@ Window {
                                     text: modelData.title
                                     anchors.verticalCenter: parent.verticalCenter
                                 }
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        notes.currentNote = modelData;
+                                        subItem.loadUI("edit.qml");
+                                    }
+                                }
                             }
                         }
                     }
@@ -155,6 +162,25 @@ Window {
             anchors.right: parent.right
             anchors.left: parent.left
             anchors.top: parent.top
+
+            state: "closed"
+            states: [
+                State {
+                    name: "opened"
+                    PropertyChanges { target: searchFocusItem; opacity: 0.5; enabled: true }
+                },
+                State {
+                    name: "closed"
+                    PropertyChanges { target: searchFocusItem; opacity: 0; enabled: false }
+                }
+            ]
+
+            transitions: [
+                Transition {
+                    to: "*"
+                    PropertyAnimation { duration: 100; properties: "opacity"; easing.type: Easing.Linear }
+                }
+            ]
 
             Rectangle {
                 id: titleRect
@@ -175,8 +201,7 @@ Window {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        menuItem.x = -5
-                        menuCalcelItem.x = 240
+                        menuContainer.state = "opened"
                     }
                 }
             }
@@ -200,7 +225,7 @@ Window {
                         searchLogo.visible = false
                         searchContent.focus = true
                         searchContent.opacity = 1.0
-                        searchFocusItem.y = 45
+                        titleItem.state = "opened"
                     }
 
                 }
@@ -257,81 +282,108 @@ Window {
                     }
                 }
             }
-        }
 
-        Item {
-            id: searchFocusItem
-            opacity: 0.5
-            y: mainWindow.height
-            height: mainWindow.height - 45
-            anchors.right: parent.right
-            anchors.left: parent.left
+            Item {
+                id: searchFocusItem
+                height: mainItem.height - 45
 
-            Rectangle {
-                color: "#262626"
-                anchors.fill: parent
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    searchFocusItem.y = mainWindow.height
-                    searchContent.focus = false
-                    if (searchContent.text === "")
-                    {
-                        searchLogo.visible = true
-                    }
-                    else
-                    {
-                        searchContent.opacity = 0.5
-                    }
-                }
-            }
-        }
-
-        Item {
-            id: menuCalcelItem
-            opacity: 0.5
-            x: mainWindow.width
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            width: mainWindow.width - 240
-
-            Rectangle {
-                color: "#262626"
-                anchors.fill: parent
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    menuItem.x = -250
-                    menuCalcelItem.x = mainWindow.width
-                }
-            }
-        }
-
-        Item {
-            id: menuItem
-            width: 250
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            x: -250
-
-            Rectangle {
-                anchors.fill: parent
-                radius: 5
-                color: "black"
-                border.color: "#919191"
-                border.width: 1
-            }
-
-            Image {
-                anchors.top: parent.top
+                anchors.top: titleItem.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: 500
-                source: "img/menu/menu.png"
+
+                Rectangle {
+                    color: "#262626"
+                    anchors.fill: parent
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        titleItem.state = "closed"
+                        searchContent.focus = false
+                        if (searchContent.text === "")
+                        {
+                            searchLogo.visible = true
+                        }
+                        else
+                        {
+                            searchContent.opacity = 0.5
+                        }
+                    }
+                }
+            }
+        }
+
+        Item {
+            id: menuContainer
+            anchors.fill: parent
+
+            state: "closed"
+            states: [
+                State {
+                    name: "opened"
+                    PropertyChanges { target: menuItem; x: -5; enabled: true }
+                    PropertyChanges { target: menuCancelItem; opacity: 0.5; enabled: true }
+                },
+                State {
+                    name: "closed"
+                    PropertyChanges { target: menuItem; x: -250; enabled: false }
+                    PropertyChanges { target: menuCancelItem; opacity: 0; enabled: false }
+                }
+            ]
+
+            transitions: [
+                Transition {
+                    to: "*"
+                    PropertyAnimation { duration: 100; properties: "x,opacity"; easing.type: Easing.Linear }
+                }
+
+            ]
+
+            Item {
+                id: menuCancelItem
+                anchors.left: menuItem.right
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.top: parent.top
+                anchors.leftMargin: -5
+
+
+                Rectangle {
+                    color: "#262626"
+                    anchors.fill: parent
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        menuContainer.state = "closed"
+                    }
+                }
+            }
+
+            Item {
+                id: menuItem
+                width: 250
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                x: -250
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 5
+                    color: "black"
+                    border.color: "#919191"
+                    border.width: 1
+                }
+
+                Image {
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: 500
+                    source: "img/menu/menu.png"
+                }
             }
         }
     }
