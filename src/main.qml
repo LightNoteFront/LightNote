@@ -9,22 +9,6 @@ Window {
     width: 320
     height: 568
 
-    function setSearchFocus(ths)
-    {
-        if (ths.id !== searchMous)
-        {
-            searchContent.focus = false
-            if (searchContent.text === "")
-            {
-                searchLogo.visible = true
-            }
-            else
-            {
-                searchContent.opacity = 0.5
-            }
-        }
-    }
-
     Item {
         id: mainItem
 
