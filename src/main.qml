@@ -129,7 +129,14 @@ Window {
                 anchors.bottomMargin: 15
                 anchors.left: parent.left
                 anchors.leftMargin: 20
-                source: "../img/title/menu.png"
+                source: "img/title/menu.png"
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        menuItem.x = -5
+                        menuCalcelItem.x = 240
+                    }
+                }
             }
 
             Rectangle {
@@ -177,7 +184,7 @@ Window {
                         width: 12
                         height: 12
                         anchors.verticalCenter: parent.verticalCenter
-                        source: "../img/title/search.png"
+                        source: "img/title/search.png"
                     }
 
                     Text {
@@ -198,7 +205,7 @@ Window {
                 anchors.bottomMargin: 15
                 anchors.right: parent.right
                 anchors.rightMargin: 20
-                source: "../img/title/addNote.png"
+                source: "img/title/addNote.png"
             }
         }
 
@@ -211,7 +218,6 @@ Window {
             anchors.left: parent.left
 
             Rectangle {
-                id: searchFocusRect
                 color: "#262626"
                 anchors.fill: parent
             }
@@ -230,6 +236,52 @@ Window {
                         searchContent.opacity = 0.5
                     }
                 }
+            }
+        }
+
+        Item {
+            id: menuCalcelItem
+            opacity: 0.5
+            x: mainWindow.width
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: mainWindow.width - 240
+
+            Rectangle {
+                color: "#262626"
+                anchors.fill: parent
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    menuItem.x = -250
+                    menuCalcelItem.x = mainWindow.width
+                }
+            }
+        }
+
+        Item {
+            id: menuItem
+            width: 250
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            x: -250
+
+            Rectangle {
+                anchors.fill: parent
+                radius: 5
+                color: "black"
+                border.color: "#919191"
+                border.width: 1
+            }
+
+            Image {
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 500
+                source: "img/menu/menu.png"
             }
         }
     }

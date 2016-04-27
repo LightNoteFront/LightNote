@@ -2,13 +2,15 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>test.qml</file>
-        <file>../img/card/newCard.png</file>
-        <file>../img/title/menu.png</file>
-        <file>../img/title/search.png</file>
-        <file>../img/title/addNote.png</file>
         <file>edit.qml</file>
         <file>img/edit/back.png</file>
         <file>img/edit/edit.png</file>
         <file>img/edit/ok.png</file>
+        <file>img/title/add.png</file>
+        <file>img/title/addNote.png</file>
+        <file>img/title/menu.png</file>
+        <file>img/title/search.png</file>
+        <file>img/menu/menu.png</file>
+        <file>img/card/newCard.png</file>
     </qresource>
 </RCC>
