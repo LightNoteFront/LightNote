@@ -123,7 +123,10 @@ Window {
                         Connections {
                             target: notes
                             onNotesChanged: {
-                                noteListView.model = notes.getGenreNotes(modelData);
+                                noteListView.model = notes.getGenreNotesFiltered(modelData);
+                            }
+                            onFilterChanged: {
+                                noteListView.model = notes.getGenreNotesFiltered(modelData);
                             }
                         }
 
@@ -133,6 +136,7 @@ Window {
 
                             clip: true
                             visible: modelData == cardList.selectedGenre
+                            interactive: modelData == cardList.selectedGenre
                             opacity: cardList.foldAnim
 
                             y: 65
@@ -142,7 +146,7 @@ Window {
                             anchors.leftMargin: 30
                             anchors.rightMargin: 30
 
-                            model: notes.getGenreNotes(modelData)
+                            model: notes.getGenreNotesFiltered(modelData)
                             spacing: 5
 
                             delegate: Item {
@@ -181,17 +185,22 @@ Window {
                 State {
                     name: "opened"
                     PropertyChanges { target: searchFocusItem; opacity: 0.5; enabled: true }
+                    PropertyChanges { target: searchContent; focus: true; opacity: 1.0 }
                 },
                 State {
                     name: "closed"
                     PropertyChanges { target: searchFocusItem; opacity: 0; enabled: false }
+                    PropertyChanges { target: searchContent; focus: false; opacity: 0.5 }
                 }
             ]
 
             transitions: [
                 Transition {
                     to: "*"
-                    PropertyAnimation { duration: 100; properties: "opacity"; easing.type: Easing.Linear }
+                    PropertyAnimation {
+                        target: searchFocusItem
+                        duration: 100; properties: "opacity"; easing.type: Easing.Linear
+                    }
                 }
             ]
 
@@ -235,9 +244,6 @@ Window {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        searchLogo.visible = false
-                        searchContent.focus = true
-                        searchContent.opacity = 1.0
                         titleItem.state = "opened"
                     }
 
@@ -246,15 +252,25 @@ Window {
                 TextInput {
                     id: searchContent
                     //text: //这里可以指定一些网络的热门搜索
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.fill: parent
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
                     color: "#ffffff"
                     font.pixelSize: 12
                     selectionColor: "#555555"
+                    onAccepted: {
+                        notes.filter = searchContent.text;
+                        titleItem.state = "closed"
+                    }
+                    onFocusChanged: {
+                        if(focus)
+                            titleItem.state = "opened"
+                    }
                 }
 
                 Row {
                     id: searchLogo
+                    visible: titleItem.state == "closed" && searchContent.text.length == 0
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     opacity: 0.5
@@ -312,16 +328,8 @@ Window {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
+                        notes.filter = searchContent.text;
                         titleItem.state = "closed"
-                        searchContent.focus = false
-                        if (searchContent.text === "")
-                        {
-                            searchLogo.visible = true
-                        }
-                        else
-                        {
-                            searchContent.opacity = 0.5
-                        }
                     }
                 }
             }

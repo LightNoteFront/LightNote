@@ -59,6 +59,15 @@ void NoteList::addGenre(QString genre)
     genreSet.insert(genre);
 }
 
+QList<QObject*> NoteList::getGenreNotesFiltered(QString genreName) const
+{
+    QList<QObject*> res;
+    for(auto note : noteList)
+        if(note->genre == genreName && (filter.isEmpty() || note->title.contains(filter, Qt::CaseInsensitive)))
+            res.append(note);
+    return res;
+}
+
 QList<QObject*> NoteList::getGenreNotes(QString genreName) const
 {
     QList<QObject*> res;
@@ -72,7 +81,8 @@ QList<QObject*> NoteList::getNotes() const
 {
     QList<QObject*> res;
     for(auto note : noteList)
-        res.append(note);
+        if(filter.isEmpty() || note->title.contains(filter, Qt::CaseInsensitive))
+            res.append(note);
     return res;
 }
 

@@ -12,6 +12,7 @@ class NoteList : public QObject
     Q_PROPERTY(QStringList genreList READ getGenreList NOTIFY notesChanged)
     Q_PROPERTY(QList<QObject*> noteList READ getNotes NOTIFY notesChanged)
     Q_PROPERTY(Note* currentNote READ getCurrentNote WRITE setCurrentNote NOTIFY currentNoteChanged)
+    Q_PROPERTY(QString filter MEMBER filter NOTIFY filterChanged)
 
 public:
 
@@ -25,6 +26,7 @@ public:
     Q_INVOKABLE QStringList getGenreList() const;
     Q_INVOKABLE void addGenre(QString genre);
 
+    Q_INVOKABLE QList<QObject*> getGenreNotesFiltered(QString genreName) const;
     Q_INVOKABLE QList<QObject*> getGenreNotes(QString genreName) const;
     Q_INVOKABLE QList<QObject*> getNotes() const;
 
@@ -48,6 +50,8 @@ signals:
     void notesChanged();
     void currentNoteChanged();
 
+    void filterChanged();
+
 protected slots:
 
     void setNotesChanged();
@@ -62,6 +66,8 @@ protected:
     QList<Note*> noteList;
 
     QSet<QString> genreSet;
+
+    QString filter;
 
     Note* currentNote;
     Note* emptyNote;
