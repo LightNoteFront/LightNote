@@ -218,9 +218,9 @@ void NoteList::setNotesChanged()
 
 void NoteList::addNote(Note* note)
 {
+    noteList.append(note);
     if(note->localId == -1)
         note->localId = noteList.length();
-    noteList.append(note);
     saveIndex();
     saveNote(note);
     setNotesChanged();

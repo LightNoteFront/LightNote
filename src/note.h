@@ -16,7 +16,7 @@ class Note : public QObject
 
 public:
 
-    explicit Note(QObject *parent = 0, int id=0);
+    explicit Note(QObject *parent = 0, int id=-1);
     Note(const Note& other);
 
     void read(const QJsonObject &json);

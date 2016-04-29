@@ -31,7 +31,7 @@ public:
     Q_INVOKABLE Note* createNote(QString genre = QString(), QString title = QString(), int id=-1);
     Q_INVOKABLE Note* createNote(const QJsonObject &json, int id=-1);
 
-    void setSignalEnabled(bool enabled);
+    Q_INVOKABLE void setSignalEnabled(bool enabled);
 
     Q_INVOKABLE Note* getCurrentNote() const;
     Q_INVOKABLE void setCurrentNote(Note* note);

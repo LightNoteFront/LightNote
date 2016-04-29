@@ -31,6 +31,8 @@ Rectangle {
                 editState = true;
                 inputTitle.forceActiveFocus();
             }
+            inputTitle.text = currentNote.title
+            textContent.text = currentNote.content
         }
     }
 
@@ -87,8 +89,6 @@ Rectangle {
                     font.pixelSize: 12
                     selectionColor: "#555555"
 
-                    text: currentNote.title
-
                 }
 
                 Row {
@@ -118,10 +118,10 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        editState = false;
                         currentNote.content = textContent.text;
                         currentNote.title = inputTitle.text;
                         notes.applyNote();
+                        editState = false;
                     }
                 }
 
@@ -172,15 +172,15 @@ Rectangle {
                 flickableDirection: Flickable.VerticalFlick
                 clip: true
 
-                contentHeight: textContent.height
+                contentHeight: textContent.contentHeight
 
                 TextEdit {
 
                     id: textContent
                     enabled: editState
-                    text: currentNote.content
 
                     width: parent.width
+                    height: Math.max(itemContent.height-10, textContent.contentHeight)
 
                     textFormat: Text.RichText
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere

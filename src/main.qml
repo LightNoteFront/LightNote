@@ -74,6 +74,7 @@ Window {
                             (cardList.selectedGenre==modelData ? (itemCardList.height - 20) * cardList.foldAnim : 0);
 
                     Rectangle {
+                        id: rectCard
                         width: itemCardList.width
                         height: itemCardList.height
                         radius: 8
@@ -119,15 +120,27 @@ Window {
                             }
                         }
 
+                        Connections {
+                            target: notes
+                            onNotesChanged: {
+                                noteListView.model = notes.getGenreNotes(modelData);
+                            }
+                        }
+
                         ListView {
 
+                            id: noteListView
+
+                            clip: true
                             visible: modelData == cardList.selectedGenre
                             opacity: cardList.foldAnim
 
-                            x: parent.width * 0.5 * 0.3
                             y: 65
-                            id: noteListView
-                            height: 20*noteListView.count
+                            height: parent.height - 75
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.leftMargin: 30
+                            anchors.rightMargin: 30
 
                             model: notes.getGenreNotes(modelData)
                             spacing: 5
@@ -400,10 +413,12 @@ Window {
             State {
                 name: "opened"
                 PropertyChanges { target: subItem; x: 0; visible: true; enabled: true }
+                PropertyChanges { target: mainItem; enabled: false }
             },
             State {
                 name: "closed"
                 PropertyChanges { target: subItem; x: parent.width; visible: false; enabled: false }
+                PropertyChanges { target: mainItem; enabled: true }
             }
         ]
 
