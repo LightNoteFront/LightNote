@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "note.h"
+#include "webrequest.h"
 
 class NoteList : public QObject
 {
@@ -17,6 +18,8 @@ public:
     explicit NoteList(QObject *parent = 0);
     ~NoteList();
 
+    void clear();
+
     Q_INVOKABLE void sync();
 
     Q_INVOKABLE QStringList getGenreList() const;
@@ -25,8 +28,8 @@ public:
     Q_INVOKABLE QList<QObject*> getGenreNotes(QString genreName) const;
     Q_INVOKABLE QList<QObject*> getNotes() const;
 
-    Q_INVOKABLE Note* createNote(QString genre = QString(), QString title = QString());
-    Q_INVOKABLE Note* createNote(const QJsonObject &json);
+    Q_INVOKABLE Note* createNote(QString genre = QString(), QString title = QString(), int id=-1);
+    Q_INVOKABLE Note* createNote(const QJsonObject &json, int id=-1);
 
     void setSignalEnabled(bool enabled);
 
@@ -34,8 +37,11 @@ public:
     Q_INVOKABLE void setCurrentNote(Note* note);
 
     Q_INVOKABLE Note* createEmptyNote();
-    Q_INVOKABLE void saveNote();
-    Q_INVOKABLE void saveNote(Note* note);
+    Q_INVOKABLE void applyNote();
+    Q_INVOKABLE void applyNote(Note* note);
+
+    Q_INVOKABLE void fullLoad();
+    Q_INVOKABLE void fullSave();
 
 signals:
 
@@ -48,6 +54,11 @@ protected slots:
 
 protected:
 
+    void addNote(Note* note);
+    bool loadNote(Note* note);
+    bool saveNote(Note* note);
+    bool saveIndex();
+
     QList<Note*> noteList;
 
     QSet<QString> genreSet;
@@ -56,6 +67,8 @@ protected:
     Note* emptyNote;
 
     bool signalEnabled;
+
+    WebRequest req;
 
 };
 

@@ -11,6 +11,9 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     NoteList notes;
+
+    // 测试说明：去掉注释运行一次，本地就有记录生成，然后记得把注释加回来
+    /*
     notes.createNote("软件项目管理", "写文档");
     notes.createNote("软件项目管理", "写代码");
     notes.createNote("软件项目管理", "做测试");
@@ -18,23 +21,7 @@ int main(int argc, char *argv[])
     notes.createNote("编译原理", "预习笔记！！！");
     notes.createNote("编译原理", "写作业");
     notes.createNote("编译原理", "张天利是个辣鸡");
-
-    // 文件增加笔记
-    QFile file("out.json");
-    if(file.open(QFile::ReadOnly))
-    {
-        QByteArray raw = file.readAll();
-        QJsonDocument doc = QJsonDocument::fromJson(raw);
-        notes.createNote(doc.object());
-        file.close();
-    }
-
-    // 网络增加笔记
-    WebRequest req("http://localhost/");
-    req.send("http://localhost/test.json", QJsonObject(), [&notes](const QJsonObject& data)
-    {
-        notes.createNote(data);
-    });
+    */
 
     QQmlApplicationEngine engine;
     QQmlContext *context=engine.rootContext();

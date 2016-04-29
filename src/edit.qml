@@ -14,28 +14,24 @@ Rectangle {
     signal exit()
 
     function doExit() {
-        notes.currentNote = null;
         mainItem.exit();
+        //notes.currentNote = null;
     }
 
     property Note currentNote: notes.currentNote
+    property bool editState: false
 
-    function setEditState(state) {
-        btnEdit.visible = !state;
-        btnOk.visible = state;
-        textContent.enabled = state;
-        inputTitle.enabled = state;
-    }
-
-
-    Component.onCompleted: {
-        if(!currentNote)
+    onEnabledChanged: {
+        if(enabled)
         {
-            currentNote = notes.createEmptyNote();
-            inputTitle.forceActiveFocus();
-            setEditState(true);
+            currentNote = notes.currentNote;
+            if(!currentNote)
+            {
+                currentNote = notes.createEmptyNote();
+                editState = true;
+                inputTitle.forceActiveFocus();
+            }
         }
-
     }
 
     ColumnLayout {
@@ -83,6 +79,7 @@ Rectangle {
 
                 TextInput {
                     id: inputTitle
+                    enabled: editState
                     anchors.fill: parent
                     color: "black"
                     horizontalAlignment: Text.AlignHCenter
@@ -95,17 +92,11 @@ Rectangle {
                         currentNote.title = inputTitle.text;
                     }
 
-                    onFocusChanged: {
-                        if(!inputTitle.focus && text.length==0)
-                            holderTitle.visible = true;
-                        else
-                            holderTitle.visible = false;
-                    }
-
                 }
 
                 Row {
                     id: holderTitle
+                    visible: !inputTitle.focus && inputTitle.text.length===0
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     opacity: 0.5
@@ -119,7 +110,7 @@ Rectangle {
 
             Image {
                 id: btnOk
-                visible: false
+                visible: editState
                 width: 25
                 height: 25
                 anchors.verticalCenter: parent.verticalCenter
@@ -130,8 +121,9 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        setEditState(false);
-                        notes.saveNote();
+                        editState = false;
+                        currentNote.content = textContent.text;
+                        notes.applyNote();
                     }
                 }
 
@@ -139,7 +131,7 @@ Rectangle {
 
             Image {
                 id: btnEdit
-                visible: true
+                visible: !editState
                 width: 25
                 height: 25
                 anchors.verticalCenter: parent.verticalCenter
@@ -150,7 +142,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        setEditState(true);
+                        editState = true;
                     }
                 }
 
@@ -173,6 +165,8 @@ Rectangle {
 
             TextEdit {
                 id: textContent
+                enabled: editState
+                text: currentNote.content
 
                 anchors.rightMargin: 5
                 anchors.leftMargin: 5

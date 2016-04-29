@@ -130,7 +130,7 @@ Item {
                             Text {
                                 id: textNote
                                 x: 2
-                                text: modelData.text
+                                text: modelData.content
                                 anchors.verticalCenter: parent.verticalCenter
                             }
                         }

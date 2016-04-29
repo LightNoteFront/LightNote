@@ -3,14 +3,16 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-Note::Note(QObject *parent)
+Note::Note(QObject *parent, int id)
     : QObject(parent)
+    , localId(id)
 {
 
 }
 
 Note::Note(const Note& other)
     : QObject(other.parent())
+    , localId(other.localId)
     , webId(other.webId)
     , title(other.title)
     , genre(other.genre)
@@ -64,19 +66,14 @@ Note& Note::operator=(const Note& other)
 
 bool Note::operator==(const Note& other)
 {
-    if(webId.isNull() || other.webId.isNull())
-        return false;
+    if(webId.isNull() && other.webId.isNull())
+        return localId == other.localId;
     return webId == other.webId;
 }
 
 void Note::setText(const QQuickTextDocument& doc)
 {
     content = doc.textDocument()->toPlainText();
-}
-
-const QString& Note::text()
-{
-    return content;
 }
 
 void Note::validate()
