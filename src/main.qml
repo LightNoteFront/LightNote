@@ -422,8 +422,8 @@ Window {
                 to: "opened"
                 SequentialAnimation {
                     PropertyAction { property: "visible"; value: true }
-                    PropertyAnimation { duration: 100; properties: "x"; easing.type: Easing.Linear }
                     PropertyAction { property: "enabled"; value: true }
+                    PropertyAnimation { duration: 100; properties: "x"; easing.type: Easing.Linear }
                 }
             }
         ]

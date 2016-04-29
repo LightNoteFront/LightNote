@@ -88,9 +88,6 @@ Rectangle {
                     selectionColor: "#555555"
 
                     text: currentNote.title
-                    onTextChanged: {
-                        currentNote.title = inputTitle.text;
-                    }
 
                 }
 
@@ -123,6 +120,7 @@ Rectangle {
                     onClicked: {
                         editState = false;
                         currentNote.content = textContent.text;
+                        currentNote.title = inputTitle.text;
                         notes.applyNote();
                     }
                 }
@@ -143,6 +141,7 @@ Rectangle {
                     anchors.fill: parent
                     onClicked: {
                         editState = true;
+                        textContent.forceActiveFocus();
                     }
                 }
 
@@ -157,22 +156,37 @@ Rectangle {
         }
 
         Item {
+
             id: itemContent
+
             anchors.right: parent.right
             anchors.left: parent.left
 
             Layout.fillHeight: true
 
-            TextEdit {
-                id: textContent
-                enabled: editState
-                text: currentNote.content
+            Flickable {
 
-                anchors.rightMargin: 5
-                anchors.leftMargin: 5
-                anchors.bottomMargin: 5
-                anchors.topMargin: 5
                 anchors.fill: parent
+                anchors.margins: 5
+
+                flickableDirection: Flickable.VerticalFlick
+                clip: true
+
+                contentHeight: textContent.height
+
+                TextEdit {
+
+                    id: textContent
+                    enabled: editState
+                    text: currentNote.content
+
+                    width: parent.width
+
+                    textFormat: Text.RichText
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+
+
+                }
 
             }
 
