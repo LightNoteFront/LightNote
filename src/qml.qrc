@@ -12,5 +12,6 @@
         <file>img/title/search.png</file>
         <file>img/menu/menu.png</file>
         <file>img/card/newCard.png</file>
+        <file>options.qml</file>
     </qresource>
 </RCC>
