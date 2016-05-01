@@ -9,6 +9,10 @@ Window {
     width: 320
     height: 568
 
+    minimumWidth: 300
+    minimumHeight: 532
+
+
     Item {
         id: mainItem
 
@@ -211,7 +215,7 @@ Window {
             }
 
             Image {
-                id: menuImag
+                id: menuImage
                 width: 15
                 anchors.top: parent.top
                 anchors.topMargin: 15
@@ -392,18 +396,160 @@ Window {
 
                 Rectangle {
                     anchors.fill: parent
-                    radius: 5
                     color: "black"
-                    border.color: "#919191"
-                    border.width: 1
+                    radius: 5
+                    border.color: "#747474"
+
+                }
+
+                MouseArea {
+                    anchors.fill: parent
                 }
 
                 Image {
+                    id: topMenuImage
                     anchors.top: parent.top
                     anchors.left: parent.left
                     anchors.right: parent.right
                     height: 500
                     source: "img/menu/menu.png"
+
+                    Column {
+                        id: menuColumn
+                        anchors.topMargin: 80
+                        anchors.right: parent.right
+                        anchors.left: parent.left
+                        anchors.bottom: parent.bottom
+                        anchors.top: parent.top
+
+                        Row {
+                            id: innerMenuRow
+                            height: 100
+                            anchors.leftMargin: 20
+                            spacing: 15
+                            anchors.right: parent.right
+                            anchors.left: parent.left
+
+                            Image {
+                                id: userPhotoImage
+                                width: 70
+                                height: 70
+                                x: 20
+                                y: 15
+
+                                source: "img/menu/null.png"
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        var newPhoto = "img/title/add.png"//添加android选取图片的API，修改source
+                                        userPhotoImage.source = newPhoto
+                                    }
+                                }
+                            }
+
+                            Column {
+                                id: innerMenuInfofationColumn
+                                y: 15
+                                spacing: 15
+
+                                Text {
+                                    id: userNameInformationText
+                                    text: "未登陆"//用户昵称
+                                    color: "#ffffff"
+                                    font.pixelSize: 24
+
+                                }
+                                Text {
+                                    id: userNoteNumberText
+                                    text: "懒家伙，没签名"//用户个性签名
+                                    color: "#747474"
+
+                                }
+                            }
+                        }
+
+                        Column {
+                            id: innerMenuColumn
+                            height: 45
+                            spacing: 10
+                            anchors.leftMargin: 20
+                            anchors.right: parent.right
+                            anchors.left: parent.left
+
+                            Rectangle {
+                                id: innerCutLineRectangle
+                                width: 215
+                                height: 1
+                                color: "#747474"
+                            }
+
+                            Text {
+                                id: innerSelectInformationText
+                                color: "#747474"
+                                text: qsTr("按标签筛选")
+                            }
+
+                        }
+
+                        Grid {
+                            id: innerMenuGrid
+                            height: 100
+                            anchors.leftMargin: 20
+                            anchors.right: parent.right
+                            anchors.left: parent.left
+
+                        }
+                    }
+                }
+
+                Item {
+                    id: footerMenuItem
+                    height: 40
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    Rectangle {
+                        id: rectangle1
+                        height: 1
+                        color: "#747474"
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                    }
+
+                    Row {
+                        id: footerCommandRow
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        anchors.left: parent.left
+                        spacing: 15
+                        anchors.leftMargin: 20
+
+                        Image {
+                            id: footerSettingImage
+                            width: 20
+                            height: 20
+                            anchors.verticalCenter: parent.verticalCenter
+                            source: "img/menu/setting.png"
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    subItem.loadUI("options.qml");
+                                }
+                            }
+                        }
+
+                        Image {
+                            id: footerUploadImage
+                            width: 30
+                            height: 20
+                            anchors.verticalCenter: parent.verticalCenter
+                            source: "img/menu/upload.png"
+
+                        }
+                    }
                 }
             }
         }
@@ -470,7 +616,7 @@ Window {
                 subItem.state = "closed";
             }
         }
-
+        //以下这些是不是可以删除了
         Rectangle {
             visible: false
 
@@ -500,4 +646,3 @@ Window {
     }
 
 }
-

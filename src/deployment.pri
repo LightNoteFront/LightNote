@@ -11,7 +11,3 @@ unix:!android {
 }
 
 export(INSTALLS)
-
-DISTFILES += \
-    $$PWD/options.qml
-

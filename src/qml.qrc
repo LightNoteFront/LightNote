@@ -13,5 +13,8 @@
         <file>img/menu/menu.png</file>
         <file>img/card/newCard.png</file>
         <file>options.qml</file>
+        <file>img/menu/null.png</file>
+        <file>img/menu/setting.png</file>
+        <file>img/menu/upload.png</file>
     </qresource>
 </RCC>
