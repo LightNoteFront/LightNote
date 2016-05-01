@@ -89,7 +89,7 @@ Window {
                         Text {
                             x: parent.width * 0.5 * 0.3
                             y: 15
-                            text: modelData == 1 ? "新建项目" : modelData
+                            text: modelData == 1 ? "新建分类" : modelData
                             font.bold : true
                             font.wordSpacing : 1.5
                             color: modelData == 1 ?"#909090":"#5ec6f6"//之后换成notes内的classcolor接口
@@ -118,7 +118,7 @@ Window {
                             onClicked: {
                                 if(modelData == 1)
                                 {
-                                    // 新建项目
+                                    // 新建分类
                                 }
                                 else
                                 {
