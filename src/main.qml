@@ -49,7 +49,7 @@ Window {
                 anchors.fill: parent
 
                 anchors.bottomMargin: -(itemCardList.height - 50 + 45 * foldAnim)
-                spacing: -(itemCardList.height - 50 + 45 * foldAnim)
+                spacing: -(itemCardList.height - 50 + 50 * foldAnim)
 
                 state: "folded"
                 states: [
@@ -88,17 +88,20 @@ Window {
 
                         Text {
                             x: parent.width * 0.5 * 0.3
-                            y: 10
+                            y: 15
                             text: modelData == 1 ? "新建项目" : modelData
-                            color: "red"//之后换成notes内的classcolor接口
-                            font.pixelSize: 18
+                            font.bold : true
+                            font.wordSpacing : 1.5
+                            color: modelData == 1 ?"#909090":"#5ec6f6"//之后换成notes内的classcolor接口
+                            font.pixelSize: 20
                         }
                         Text {
                             visible: modelData != 1
                             x: parent.width * 0.5 * 0.3
-                            y: 35
+                            y: 38
                             text: noteListView.count + "项笔记"
-                            color: "blue"//之后换成notes内的classcolor接口
+                            font.wordSpacing : 1.3
+                            color: "#87d2f4"//之后换成notes内的classcolor接口
                             font.pixelSize: 12
                         }
                         Rectangle {
@@ -133,7 +136,7 @@ Window {
                                 noteListView.model = notes.getGenreNotesFiltered(modelData);
                             }
                         }
-
+                        //各项笔记
                         ListView {
 
                             id: noteListView
@@ -155,10 +158,20 @@ Window {
 
                             delegate: Item {
                                 width: 60
-                                height: 20
+                                height: 24
+                                Image {
+                                    y:22
+                                    width: 300
+                                    height: 2
+                                    opacity:0.5
+                                    source: "img/card/line.png"
+                                }
                                 Text {
                                     x: 2
+                                    color:"#6999af"
+                                    font.wordSpacing : 1.5
                                     text: modelData.title
+                                    font.pixelSize: 16
                                     anchors.verticalCenter: parent.verticalCenter
                                 }
                                 MouseArea {
@@ -172,7 +185,6 @@ Window {
                         }
                     }
                 }
-
             }
         }
 

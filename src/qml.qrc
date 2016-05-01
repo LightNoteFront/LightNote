@@ -16,5 +16,6 @@
         <file>img/menu/null.png</file>
         <file>img/menu/setting.png</file>
         <file>img/menu/upload.png</file>
+        <file>img/card/line.png</file>
     </qresource>
 </RCC>
