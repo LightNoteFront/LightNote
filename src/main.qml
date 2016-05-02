@@ -144,7 +144,7 @@ Window {
 
                             clip: true
                             visible: modelData == cardList.selectedGenre
-                            interactive: modelData == cardList.selectedGenre
+                            interactive: cardList.state == "opened"
                             opacity: cardList.foldAnim
 
                             y: 65

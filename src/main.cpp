@@ -2,6 +2,7 @@
 #include <QJsonDocument>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QDebug>
 
 #include "notelist.h"
 #include "webrequest.h"
@@ -11,6 +12,24 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     NoteList notes;
+
+
+    WebRequest request("http://10.50.141.13:3000/");
+
+    /*/
+    QJsonObject json;
+    json.insert("userID", "test");
+    json.insert("userPassword", "password");
+    //json.insert("userPhoneNumber", "13333333333");
+
+    request.send("http://10.50.141.13:3000/Login", json, [](const QJsonObject& data)
+    {
+        QJsonDocument doc(data);
+        qDebug() << doc.toJson();
+        qDebug() << data["result"].toBool();
+
+    });
+    //*/
 
     // 测试说明：去掉注释运行一次，本地就有记录生成，然后记得把注释加回来
     /*
