@@ -88,7 +88,7 @@ Window {
 
                         Text {
                             x: parent.width * 0.5 * 0.3
-                            y: 15
+                            y: 10
                             text: modelData == 1 ? "新建分类" : modelData
                             font.bold : true
                             font.wordSpacing : 1.5
@@ -98,7 +98,7 @@ Window {
                         Text {
                             visible: modelData != 1
                             x: parent.width * 0.5 * 0.3
-                            y: 38
+                            y: 35
                             text: noteListView.count + "项笔记"
                             font.wordSpacing : 1.3
                             color: "#87d2f4"//之后换成notes内的classcolor接口
@@ -106,8 +106,9 @@ Window {
                         }
                         Rectangle {
                             y: 55
-                            width: parent.width
-                            height: 1
+                            width: 300
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            height: 2
                             opacity: 0.2
                             color: "black"
                         }
@@ -159,6 +160,7 @@ Window {
                             delegate: Item {
                                 width: 60
                                 height: 24
+
                                 Image {
                                     y:22
                                     width: 300
@@ -166,14 +168,41 @@ Window {
                                     opacity:0.5
                                     source: "img/card/line.png"
                                 }
-                                Text {
-                                    x: 2
-                                    color:"#6999af"
-                                    font.wordSpacing : 1.5
-                                    text: modelData.title
-                                    font.pixelSize: 16
-                                    anchors.verticalCenter: parent.verticalCenter
+
+                                Row {
+                                    id: noteRow
+
+                                    ListView {
+                                        id: noteTagListView
+
+                                        visible: modelData == cardList.selectedGenre
+                                        interactive: modelData == cardList.selectedGenre
+                                        opacity: cardList.foldAnim
+
+                                        model: ListModel {
+
+                                        }
+
+                                        delegate: Item {
+                                            Text {
+                                                color: "black"
+                                                text: modelData.title
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+                                    }
+
+                                    Text {
+                                        color: "#6999af"
+                                        font.wordSpacing : 1.5
+                                        text: modelData.title
+                                        font.pixelSize: 16
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
                                 }
+
+
+
                                 MouseArea {
                                     anchors.fill: parent
                                     onClicked: {
