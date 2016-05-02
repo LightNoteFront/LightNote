@@ -39,7 +39,7 @@ Rectangle {
 
     Item {
 
-        id: itemLayout
+        id: itemContainer
         anchors.fill: parent
 
         Item {
@@ -122,6 +122,7 @@ Rectangle {
                     onClicked: {
                         currentNote.content = textContent.text;
                         currentNote.title = inputTitle.text;
+                        currentNote.genre = genreSelect.selectedGenre;
                         notes.applyNote();
                         editState = false;
                     }
@@ -166,10 +167,10 @@ Rectangle {
                 width: 88
                 height: 22
                 color: state == "closed" ? "#f5f5f5" : "#cccccc"
+                border.color: state == "closed" ? "#979797" : "#cccccc"
                 radius: 5
                 anchors.left: parent.left
                 anchors.leftMargin: 35
-                border.color: state == "closed" ? "#979797" : "#cccccc"
                 anchors.verticalCenter: parent.verticalCenter
 
                 property double foldAnim: 0
@@ -229,15 +230,41 @@ Rectangle {
                 y: 4
                 width: 88
                 height: 22
-                color: "#f5f5f5"
+                color: state == "closed" ? "#f5f5f5" : "#cccccc"
+                border.color: state == "closed" ? "#979797" : "#cccccc"
                 radius: 5
                 anchors.right: parent.right
                 anchors.rightMargin: 35
                 anchors.verticalCenter: parent.verticalCenter
-                border.color: "#979797"
+
+                property double foldAnim: 0
+
+                state: "closed"
+                states: [
+                    State {
+                        name: "closed"
+                        PropertyChanges { target: btnGenre; foldAnim: 0}
+                        PropertyChanges { target: genreSelect; enabled: false}
+                    },
+                    State {
+                        name: "opened"
+                        PropertyChanges { target: btnGenre; foldAnim: 1}
+                        PropertyChanges { target: genreSelect; enabled: true}
+                    }
+                ]
+
+                transitions: [
+                    Transition {
+                        to: "*"
+                        PropertyAnimation { duration: 200; properties: "foldAnim"; easing.type: Easing.Linear }
+                    }
+                ]
 
                 MouseArea {
                     anchors.fill: parent
+                    onClicked: {
+                        btnGenre.state = (btnGenre.state == "closed" ? "opened" : "closed");
+                    }
                 }
 
                 Text {
@@ -256,7 +283,8 @@ Rectangle {
                     y: -9
                     width: 14
                     height: 9
-                    anchors.verticalCenterOffset: 1
+                    anchors.verticalCenterOffset: 1-2*btnGenre.foldAnim
+                    rotation: -180*btnGenre.foldAnim
                     anchors.right: parent.right
                     anchors.rightMargin: 10
                     source: "img/edit/arrows.png"
@@ -318,6 +346,94 @@ Rectangle {
                     textFormat: Text.RichText
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
+
+                }
+
+            }
+
+        }
+
+        Item {
+
+            id: genreSelect
+            anchors.fill: parent
+
+            property string selectedGenre: ""
+
+            Rectangle {
+                id: genreSelectOverlay
+                anchors.fill: parent
+                color: "black"
+                opacity: btnGenre.foldAnim*0.2
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    btnGenre.state = "closed"
+                }
+            }
+
+            Rectangle {
+                id: genreSelectList
+                y: 80
+                anchors.right: parent.right
+                anchors.rightMargin: 30
+                width: 200
+                height: btnGenre.foldAnim*129
+
+                ListView {
+                    id: genreSelectListView
+
+                    anchors.fill: parent
+                    anchors.margins: 3
+
+                    spacing: 1
+                    clip: true
+
+                    model: [1].concat(notes.getGenreList())
+
+                    delegate: Rectangle {
+
+                        height: 30
+                        width: genreSelectListView.width
+                        color: "white"
+
+                        Rectangle {
+                            visible: modelData !== 1
+                            color: "#DDDDDD"
+                            height: 1
+                            width: parent.width
+                            y: -1
+                        }
+
+                        Text {
+                            anchors.fill: parent
+                            anchors.margins: 2
+                            verticalAlignment: Text.AlignVCenter
+                            font.pixelSize: 14
+                            text: modelData === 1 ? "新建项目..." : modelData
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(modelData === 1)
+                                {
+                                    // 新建
+                                }
+                                else
+                                {
+                                    genreSelect.selectedGenre = modelData;
+                                    btnGenre.state = "closed";
+                                }
+                            }
+                            onPressedChanged: {
+                                parent.color = pressed ? "#DDDDDD" : "white"
+                            }
+                        }
+
+                    }
 
                 }
 
