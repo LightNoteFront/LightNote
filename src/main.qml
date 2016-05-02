@@ -194,11 +194,11 @@ Window {
                                             }
 
                                             Text {
-                                                color: "#6999af"
+                                                color: "#ffffff"
                                                 font.pixelSize: 12
                                                 font.wordSpacing : 1.5
                                                 anchors.verticalCenter: parent.verticalCenter
-                                                text: modelData
+                                                text: modelData[0]
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                             }
                                         }
