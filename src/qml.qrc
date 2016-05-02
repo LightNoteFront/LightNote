@@ -18,5 +18,6 @@
         <file>img/menu/setting.png</file>
         <file>img/menu/upload.png</file>
         <file>img/card/line.png</file>
+        <file>img/card/ball.png</file>
     </qresource>
 </RCC>

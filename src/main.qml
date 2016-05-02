@@ -74,7 +74,7 @@ Window {
 
                 delegate: Item {
                     width: itemCardList.width
-                    height: itemCardList.height * 1 +
+                    height: itemCardList.height * 1.01 +
                             (cardList.selectedGenre==modelData ? (itemCardList.height - 20) * cardList.foldAnim : 0);
 
                     Rectangle {
@@ -106,9 +106,9 @@ Window {
                         }
                         Rectangle {
                             y: 55
-                            width: 300
+                            width: parent.width
                             anchors.horizontalCenter: parent.horizontalCenter
-                            height: 2
+                            height: 1
                             opacity: 0.2
                             color: "black"
                         }
@@ -158,36 +158,48 @@ Window {
                             spacing: 5
 
                             delegate: Item {
-                                width: 60
+                                id: textTitleItem
+                                width: parent.width
                                 height: 24
 
-                                Image {
-                                    y:22
-                                    width: 300
-                                    height: 2
-                                    opacity:0.5
-                                    source: "img/card/line.png"
+                                Rectangle {
+                                    y: 22
+                                    width: parent.width
+                                    height: 1
+                                    opacity: 0.2
+                                    color: "black"
                                 }
 
                                 Row {
                                     id: noteRow
 
+                                    anchors.fill: parent
+
                                     ListView {
                                         id: noteTagListView
+                                        orientation: ListView.Horizontal
+                                        anchors.top: parent.top
+                                        anchors.bottom: parent.bottom
+                                        width: 22 * noteTagListView.count + 2
+                                        spacing: 2
 
-                                        visible: modelData == cardList.selectedGenre
-                                        interactive: modelData == cardList.selectedGenre
-                                        opacity: cardList.foldAnim
-
-                                        model: ListModel {
-
-                                        }
+                                        model: modelData.tags
 
                                         delegate: Item {
+                                            width: 20
+                                            height: 20
+                                            Image {
+                                                anchors.fill: parent
+                                                source: "img/card/ball.png"
+                                            }
+
                                             Text {
-                                                color: "black"
-                                                text: modelData.title
+                                                color: "#6999af"
+                                                font.pixelSize: 12
+                                                font.wordSpacing : 1.5
                                                 anchors.verticalCenter: parent.verticalCenter
+                                                text: modelData
+                                                anchors.horizontalCenter: parent.horizontalCenter
                                             }
                                         }
                                     }
@@ -196,12 +208,10 @@ Window {
                                         color: "#6999af"
                                         font.wordSpacing : 1.5
                                         text: modelData.title
-                                        font.pixelSize: 16
                                         anchors.verticalCenter: parent.verticalCenter
+                                        font.pixelSize: 16
                                     }
                                 }
-
-
 
                                 MouseArea {
                                     anchors.fill: parent
@@ -577,7 +587,7 @@ Window {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    subItem.loadUI("options.qml");
+                                    subItem.loadUI("test.qml");
                                 }
                             }
                         }
@@ -646,7 +656,7 @@ Window {
 
         Loader {
             id: testLoader
-            //source: "edit.qml"
+            //source: "test.qml"
             anchors.fill: parent
         }
 
