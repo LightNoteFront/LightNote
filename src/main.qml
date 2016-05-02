@@ -9,6 +9,10 @@ Window {
     width: 320
     height: 568
 
+    minimumWidth: 300
+    minimumHeight: 532
+
+
     Item {
         id: mainItem
 
@@ -45,7 +49,7 @@ Window {
                 anchors.fill: parent
 
                 anchors.bottomMargin: -(itemCardList.height - 50 + 45 * foldAnim)
-                spacing: -(itemCardList.height - 50 + 45 * foldAnim)
+                spacing: -(itemCardList.height - 50 + 50 * foldAnim)
 
                 state: "folded"
                 states: [
@@ -84,17 +88,20 @@ Window {
 
                         Text {
                             x: parent.width * 0.5 * 0.3
-                            y: 10
-                            text: modelData == 1 ? "新建项目" : modelData
-                            color: "red"//之后换成notes内的classcolor接口
-                            font.pixelSize: 18
+                            y: 15
+                            text: modelData == 1 ? "新建分类" : modelData
+                            font.bold : true
+                            font.wordSpacing : 1.5
+                            color: modelData == 1 ?"#909090":"#5ec6f6"//之后换成notes内的classcolor接口
+                            font.pixelSize: 20
                         }
                         Text {
                             visible: modelData != 1
                             x: parent.width * 0.5 * 0.3
-                            y: 35
+                            y: 38
                             text: noteListView.count + "项笔记"
-                            color: "blue"//之后换成notes内的classcolor接口
+                            font.wordSpacing : 1.3
+                            color: "#87d2f4"//之后换成notes内的classcolor接口
                             font.pixelSize: 12
                         }
                         Rectangle {
@@ -111,7 +118,7 @@ Window {
                             onClicked: {
                                 if(modelData == 1)
                                 {
-                                    // 新建项目
+                                    // 新建分类
                                 }
                                 else
                                 {
@@ -129,7 +136,7 @@ Window {
                                 noteListView.model = notes.getGenreNotesFiltered(modelData);
                             }
                         }
-
+                        //各项笔记
                         ListView {
 
                             id: noteListView
@@ -151,10 +158,20 @@ Window {
 
                             delegate: Item {
                                 width: 60
-                                height: 20
+                                height: 24
+                                Image {
+                                    y:22
+                                    width: 300
+                                    height: 2
+                                    opacity:0.5
+                                    source: "img/card/line.png"
+                                }
                                 Text {
                                     x: 2
+                                    color:"#6999af"
+                                    font.wordSpacing : 1.5
                                     text: modelData.title
+                                    font.pixelSize: 16
                                     anchors.verticalCenter: parent.verticalCenter
                                 }
                                 MouseArea {
@@ -168,7 +185,6 @@ Window {
                         }
                     }
                 }
-
             }
         }
 
@@ -211,7 +227,7 @@ Window {
             }
 
             Image {
-                id: menuImag
+                id: menuImage
                 width: 15
                 anchors.top: parent.top
                 anchors.topMargin: 15
@@ -392,18 +408,160 @@ Window {
 
                 Rectangle {
                     anchors.fill: parent
-                    radius: 5
                     color: "black"
-                    border.color: "#919191"
-                    border.width: 1
+                    radius: 5
+                    border.color: "#747474"
+
+                }
+
+                MouseArea {
+                    anchors.fill: parent
                 }
 
                 Image {
+                    id: topMenuImage
                     anchors.top: parent.top
                     anchors.left: parent.left
                     anchors.right: parent.right
                     height: 500
                     source: "img/menu/menu.png"
+
+                    Column {
+                        id: menuColumn
+                        anchors.topMargin: 80
+                        anchors.right: parent.right
+                        anchors.left: parent.left
+                        anchors.bottom: parent.bottom
+                        anchors.top: parent.top
+
+                        Row {
+                            id: innerMenuRow
+                            height: 100
+                            anchors.leftMargin: 20
+                            spacing: 15
+                            anchors.right: parent.right
+                            anchors.left: parent.left
+
+                            Image {
+                                id: userPhotoImage
+                                width: 70
+                                height: 70
+                                x: 20
+                                y: 15
+
+                                source: "img/menu/null.png"
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        var newPhoto = "img/title/add.png"//添加android选取图片的API，修改source
+                                        userPhotoImage.source = newPhoto
+                                    }
+                                }
+                            }
+
+                            Column {
+                                id: innerMenuInfofationColumn
+                                y: 15
+                                spacing: 15
+
+                                Text {
+                                    id: userNameInformationText
+                                    text: "未登陆"//用户昵称
+                                    color: "#ffffff"
+                                    font.pixelSize: 24
+
+                                }
+                                Text {
+                                    id: userNoteNumberText
+                                    text: "懒家伙，没签名"//用户个性签名
+                                    color: "#747474"
+
+                                }
+                            }
+                        }
+
+                        Column {
+                            id: innerMenuColumn
+                            height: 45
+                            spacing: 10
+                            anchors.leftMargin: 20
+                            anchors.right: parent.right
+                            anchors.left: parent.left
+
+                            Rectangle {
+                                id: innerCutLineRectangle
+                                width: 215
+                                height: 1
+                                color: "#747474"
+                            }
+
+                            Text {
+                                id: innerSelectInformationText
+                                color: "#747474"
+                                text: qsTr("按标签筛选")
+                            }
+
+                        }
+
+                        Grid {
+                            id: innerMenuGrid
+                            height: 100
+                            anchors.leftMargin: 20
+                            anchors.right: parent.right
+                            anchors.left: parent.left
+
+                        }
+                    }
+                }
+
+                Item {
+                    id: footerMenuItem
+                    height: 40
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    Rectangle {
+                        id: rectangle1
+                        height: 1
+                        color: "#747474"
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                    }
+
+                    Row {
+                        id: footerCommandRow
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        anchors.left: parent.left
+                        spacing: 15
+                        anchors.leftMargin: 20
+
+                        Image {
+                            id: footerSettingImage
+                            width: 20
+                            height: 20
+                            anchors.verticalCenter: parent.verticalCenter
+                            source: "img/menu/setting.png"
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    subItem.loadUI("options.qml");
+                                }
+                            }
+                        }
+
+                        Image {
+                            id: footerUploadImage
+                            width: 30
+                            height: 20
+                            anchors.verticalCenter: parent.verticalCenter
+                            source: "img/menu/upload.png"
+
+                        }
+                    }
                 }
             }
         }
@@ -470,7 +628,7 @@ Window {
                 subItem.state = "closed";
             }
         }
-
+        //以下这些是不是可以删除了
         Rectangle {
             visible: false
 
@@ -500,4 +658,3 @@ Window {
     }
 
 }
-
