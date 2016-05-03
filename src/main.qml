@@ -105,7 +105,7 @@ Window {
                             font.pixelSize: 12
                         }
                         Rectangle {
-                            y: 55
+                            y: 60
                             width: parent.width
                             anchors.horizontalCenter: parent.horizontalCenter
                             height: 1
@@ -147,7 +147,7 @@ Window {
                             interactive: cardList.state == "opened"
                             opacity: cardList.foldAnim
 
-                            y: 65
+                            y: 70
                             height: parent.height - 75
                             anchors.left: parent.left
                             anchors.right: parent.right
@@ -216,11 +216,18 @@ Window {
 
                                 MouseArea {
                                     anchors.fill: parent
+                                    onPressAndHold: {
+                                        questionItem.question(modelData)
+                                    }
+
                                     onClicked: {
                                         notes.currentNote = modelData;
                                         subItem.loadUI("edit.qml");
                                     }
                                 }
+
+
+
                             }
                         }
                     }
@@ -815,6 +822,8 @@ Window {
 
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.verticalCenter: parent.verticalCenter
+
                                 text: "登陆"
                             }
 
@@ -836,6 +845,8 @@ Window {
 
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.verticalCenter: parent.verticalCenter
+
                                 text: "注册"
                             }
 
@@ -991,6 +1002,8 @@ Window {
 
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.verticalCenter: parent.verticalCenter
+
                                 text: "注册"
                             }
 
@@ -1019,6 +1032,8 @@ Window {
 
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.verticalCenter: parent.verticalCenter
+
                                 text: "重置"
                             }
 
@@ -1130,6 +1145,97 @@ Window {
 
         }*/
 
+    }
+
+    Item {
+        id: questionItem
+
+        function question(note)
+        {
+            questionText.text = "删除“" + note.title + "”？"
+            questionItem.state = "notify"
+        }
+        anchors.fill: parent
+
+        state: "closed"
+        states: [
+            State {
+                name: "question"
+                PropertyChanges { target: questionItem; opacity: 1; enabled: true }
+            },
+            State {
+                name: "closed"
+                PropertyChanges { target: questionItem; opacity: 0; enabled: false }
+            }
+        ]
+
+        transitions: [
+            Transition {
+                to: "*"
+                PropertyAnimation {
+                    target: questionItem
+                    duration: 100; properties: "opacity"; easing.type: Easing.Linear
+                }
+            }
+        ]
+
+        Rectangle {
+            color: "#262626"
+            anchors.fill: parent
+            opacity: 0.5
+        }
+
+        Rectangle {
+            id: questionRectangle
+            color: "#262626"
+            radius: 8
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            opacity: 0.8
+            width: 200
+            height: 100
+
+            Text {
+                id: questionText
+                color: "#ffffff"
+                anchors.verticalCenterOffset: -14
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+            }
+        }
+        Rectangle {
+            anchors.left: questionRectangle.left
+            anchors.right: questionRectangle.right
+            anchors.bottom: questionRectangle.bottom
+            anchors.bottomMargin: 5
+            height: questionRectangle.height / 4
+            color: "red"
+            Rectangle {
+                id: rectangle2
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: -5
+                anchors.top: parent.top
+                radius: 5
+                color: "red"
+
+                Text {
+                    color: "#ffffff"
+                    font.pixelSize: 14
+                    text: "删除"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                questionItem.state = "closed"
+            }
+        }
     }
 
     Item {
