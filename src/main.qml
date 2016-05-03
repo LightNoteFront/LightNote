@@ -92,7 +92,7 @@ Window {
                             text: modelData == 1 ? "新建分类" : modelData
                             font.bold : true
                             font.wordSpacing : 1.5
-                            color: modelData == 1 ?"#909090":"#5ec6f6"//之后换成notes内的classcolor接口
+                            color: modelData === 1 ? "#909090" : notes.getColor(modelData.charCodeAt(Math.max(modelData.length-2, 0)))
                             font.pixelSize: 20
                         }
                         Text {
@@ -101,7 +101,7 @@ Window {
                             y: 35
                             text: noteListView.count + "项笔记"
                             font.wordSpacing : 1.3
-                            color: "#87d2f4"//之后换成notes内的classcolor接口
+                            color: modelData === 1 ? "black" : notes.getColor(modelData.charCodeAt(Math.max(modelData.length-2, 0)))
                             font.pixelSize: 12
                         }
                         Rectangle {
@@ -188,9 +188,10 @@ Window {
                                         delegate: Item {
                                             width: 20
                                             height: 20
-                                            Image {
+                                            Rectangle {
                                                 anchors.fill: parent
-                                                source: "img/card/ball.png"
+                                                color: notes.getColor(modelData.charCodeAt(Math.max(modelData.length-2, 0)))
+                                                radius: 10
                                             }
 
                                             Text {
