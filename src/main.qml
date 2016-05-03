@@ -1039,94 +1039,95 @@ Window {
             }
         }
 
-        Item {
-            id: subItem
+    }
 
-            height: parent.height
-            width: parent.width
-            x: 0
+    Item {
 
-            state: "closed"
-            states: [
-                State {
-                    name: "opened"
-                    PropertyChanges { target: subItem; x: 0; visible: true; enabled: true }
-                    PropertyChanges { target: mainItem; enabled: false }
-                },
-                State {
-                    name: "closed"
-                    PropertyChanges { target: subItem; x: parent.width; visible: false; enabled: false }
-                    PropertyChanges { target: mainItem; enabled: true }
+        id: subItem
+
+        height: parent.height
+        width: parent.width
+        x: 0
+
+        state: "closed"
+        states: [
+            State {
+                name: "opened"
+                PropertyChanges { target: subItem; x: 0; visible: true; enabled: true }
+                PropertyChanges { target: mainItem; enabled: false }
+            },
+            State {
+                name: "closed"
+                PropertyChanges { target: subItem; x: parent.width; visible: false; enabled: false }
+                PropertyChanges { target: mainItem; enabled: true }
+            }
+        ]
+
+        transitions: [
+            Transition {
+                from: "opened"
+                to: "closed"
+                SequentialAnimation {
+                    PropertyAnimation { duration: 100; properties: "x"; easing.type: Easing.Linear }
+                    PropertyAction { property: "visible"; value: false }
                 }
-            ]
-
-            transitions: [
-                Transition {
-                    from: "opened"
-                    to: "closed"
-                    SequentialAnimation {
-                        PropertyAction { property: "enabled"; value: false }
-                        PropertyAnimation { duration: 100; properties: "x"; easing.type: Easing.Linear }
-                        PropertyAction { property: "visible"; value: false }
-                    }
-                },
-                Transition {
-                    from: "closed"
-                    to: "opened"
-                    SequentialAnimation {
-                        PropertyAction { property: "visible"; value: true }
-                        PropertyAction { property: "enabled"; value: true }
-                        PropertyAnimation { duration: 100; properties: "x"; easing.type: Easing.Linear }
-                    }
+            },
+            Transition {
+                from: "closed"
+                to: "opened"
+                SequentialAnimation {
+                    PropertyAction { property: "visible"; value: true }
+                    PropertyAnimation { duration: 100; properties: "x"; easing.type: Easing.Linear }
                 }
-            ]
+            }
+        ]
 
-            function loadUI(url)
-            {
-                testLoader.source = url;
-                subItem.state = "opened";
+        function loadUI(url)
+        {
+            testLoader.source = url;
+            subItem.state = "opened";
+        }
+
+        Loader {
+            id: testLoader
+            //source: "test.qml"
+            anchors.fill: parent
+        }
+
+        Connections {
+            target: testLoader.item
+            onExit: {
+                subItem.enabled = false;
+                subItem.state = "closed";
+            }
+        }
+        //以下这些是不是可以删除了
+        /*
+        Rectangle {
+            visible: false
+
+            width: 20
+            height: 20
+            color: "black"
+            anchors.top: parent.top
+            anchors.right: parent.right
+
+            Text {
+                anchors.centerIn: parent
+                text: "×"
+                color: "white"
+                font.pixelSize: 18
             }
 
-            Loader {
-                id: testLoader
-                //source: "test.qml"
+            MouseArea {
                 anchors.fill: parent
-            }
-
-            Connections {
-                target: testLoader.item
-                onExit: {
+                onClicked: {
                     subItem.enabled = false;
                     subItem.state = "closed";
                 }
             }
-            //以下这些是不是可以删除了
-            Rectangle {
-                visible: false
 
-                width: 20
-                height: 20
-                color: "black"
-                anchors.top: parent.top
-                anchors.right: parent.right
-
-                Text {
-                    anchors.centerIn: parent
-                    text: "×"
-                    color: "white"
-                    font.pixelSize: 18
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        subItem.enabled = false;
-                        subItem.state = "closed";
-                    }
-                }
-
-            }
-        }
+        }*/
 
     }
 
