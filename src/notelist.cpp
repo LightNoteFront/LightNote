@@ -226,6 +226,33 @@ void NoteList::fullSave()
 
 }
 
+QStringList NoteList::getPopularTags(int limit) const
+{
+    if(limit<=0) return QStringList();
+    QStringList res;
+    for(auto tag : tagPop)
+    {
+        res.append(tag);
+        if(limit--<=0)
+            break;
+    }
+    return res;
+}
+
+void NoteList::addPopularTag(QString tag, int weight)
+{
+    int pop = popTags[tag];
+    popTags[tag] = pop + weight;
+    tagPop.remove(qMakePair(pop, tag));
+    tagPop[qMakePair(pop + weight, tag)] = tag;
+    while(tagPop.size() > maxPopTag)
+    {
+        auto firstKey = tagPop.firstKey();
+        tagPop.remove(firstKey);
+        popTags.remove(firstKey.second);
+    }
+}
+
 QString NoteList::getColor(int index) const
 {
     return colorList[index%colorList.size()];
@@ -240,6 +267,8 @@ void NoteList::setNotesChanged()
 void NoteList::addNote(Note* note)
 {
     noteList.append(note);
+    for(auto tag : note->tags)
+        addPopularTag(tag, 1);
     if(note->localId == -1)
         note->localId = noteList.length();
     saveIndex();

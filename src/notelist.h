@@ -45,6 +45,9 @@ public:
     Q_INVOKABLE void fullLoad();
     Q_INVOKABLE void fullSave();
 
+    Q_INVOKABLE QStringList getPopularTags(int limit = 5) const;
+    Q_INVOKABLE void addPopularTag(QString tag, int weight = 1);
+
     Q_INVOKABLE QString getColor(int index) const;
 
 signals:
@@ -79,6 +82,10 @@ protected:
     WebRequest* req;
 
     QList<QString> colorList;
+
+    QMap<QString, int> popTags;
+    QMap<QPair<int, QString>, QString> tagPop;
+    const int maxPopTag = 30;
 
 };
 
