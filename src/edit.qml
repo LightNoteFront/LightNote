@@ -412,7 +412,7 @@ Rectangle {
                             anchors.margins: 2
                             verticalAlignment: Text.AlignVCenter
                             font.pixelSize: 14
-                            text: modelData === 1 ? "新建项目..." : modelData
+                            text: modelData === 1 ? "新建分类..." : modelData
                             color: modelData === 1 ? "black" :
                                    notes.getColor(modelData.charCodeAt(Math.max(modelData.length-2, 0)))
                         }
