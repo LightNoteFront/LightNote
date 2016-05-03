@@ -16,7 +16,7 @@ class NoteList : public QObject
 
 public:
 
-    explicit NoteList(QObject *parent = 0);
+    explicit NoteList(WebRequest* request, QObject *parent = 0);
     ~NoteList();
 
     void clear();
@@ -44,6 +44,8 @@ public:
 
     Q_INVOKABLE void fullLoad();
     Q_INVOKABLE void fullSave();
+
+    Q_INVOKABLE QString getColor(int index) const;
 
 signals:
 
@@ -74,7 +76,9 @@ protected:
 
     bool signalEnabled;
 
-    WebRequest req;
+    WebRequest* req;
+
+    QList<QString> colorList;
 
 };
 

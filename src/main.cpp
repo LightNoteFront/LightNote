@@ -11,10 +11,8 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-    NoteList notes;
-
-
     WebRequest request("http://10.50.141.13:3000/");
+    NoteList notes(&request);
 
     /*/
     QJsonObject json;

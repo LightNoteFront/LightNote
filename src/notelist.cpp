@@ -5,14 +5,19 @@
 #include <QJsonDocument>
 #include <QDir>
 
-NoteList::NoteList(QObject *parent)
+NoteList::NoteList(WebRequest* request, QObject *parent)
     : QObject(parent)
     , currentNote(nullptr)
     , emptyNote(nullptr)
     , signalEnabled(true)
-    , req("http://localhost/")
+    , req(request)
 {
     fullLoad();
+    colorList << "aqua" << "blueviolet" << "chocolate" << "crimson" << "darkblue" << "dodgerblue"
+              << "forestgreen" << "firebrick" << "gold" << "hotpink" << "lightseagreen" << "lime"
+              << "limegreen" << "lightsalmon" << "mediumspringgreen" << "mediumpurple" << "navy"
+              << "olive" << "orange" << "orangered" << "peru" << "plum" << "purple" << "red"
+              << "salmon" << "seagreen" << "steelblue" << "tomato" << "violet" << "yellow";
 }
 
 NoteList::~NoteList()
@@ -39,7 +44,7 @@ void NoteList::sync()
 
     fullSave();
 
-    req.send("http://localhost/test.json", QJsonObject(), [this](const QJsonObject& data)
+    req->send("http://localhost/test.json", QJsonObject(), [this](const QJsonObject& data)
     {
         createNote(data);
     });
@@ -219,6 +224,11 @@ void NoteList::fullSave()
 
     }
 
+}
+
+QString NoteList::getColor(int index)
+{
+    return colorList[index%colorList.size()];
 }
 
 void NoteList::setNotesChanged()
