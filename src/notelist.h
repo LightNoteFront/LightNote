@@ -13,6 +13,7 @@ class NoteList : public QObject
     Q_PROPERTY(QList<QObject*> noteList READ getNotes NOTIFY notesChanged)
     Q_PROPERTY(Note* currentNote READ getCurrentNote WRITE setCurrentNote NOTIFY currentNoteChanged)
     Q_PROPERTY(QString filter MEMBER filter NOTIFY filterChanged)
+    Q_PROPERTY(QStringList popularTags READ getPopularTags NOTIFY popularTagsChanged)
 
 public:
 
@@ -45,7 +46,7 @@ public:
     Q_INVOKABLE void fullLoad();
     Q_INVOKABLE void fullSave();
 
-    Q_INVOKABLE QStringList getPopularTags(int limit = 5) const;
+    Q_INVOKABLE QStringList getPopularTags(int limit = 10) const;
     Q_INVOKABLE void addPopularTag(QString tag, int weight = 1);
 
     Q_INVOKABLE QString getColor(int index) const;
@@ -56,6 +57,8 @@ signals:
     void currentNoteChanged();
 
     void filterChanged();
+
+    void popularTagsChanged();
 
 protected slots:
 

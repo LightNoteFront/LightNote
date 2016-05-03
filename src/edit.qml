@@ -34,6 +34,8 @@ Rectangle {
             }
             inputTitle.text = currentNote.title
             textContent.text = currentNote.content
+            tagListView.model = currentNote.tags
+            genreSelect.selectedGenre = currentNote.genre
         }
     }
 
@@ -123,6 +125,7 @@ Rectangle {
                         currentNote.content = textContent.text;
                         currentNote.title = inputTitle.text;
                         currentNote.genre = genreSelect.selectedGenre;
+                        currentNote.tags = tagListView.model;
                         notes.applyNote();
                         editState = false;
                     }
@@ -228,7 +231,7 @@ Rectangle {
                 id: btnGenre
                 x: 163
                 y: 4
-                width: 88
+                width: Math.min(textGenreButton.contentWidth, 72) + 36
                 height: 22
                 color: state == "closed" ? "#f5f5f5" : "#cccccc"
                 border.color: state == "closed" ? "#979797" : "#cccccc"
@@ -268,11 +271,15 @@ Rectangle {
                 }
 
                 Text {
+                    id: textGenreButton
                     y: -9
                     color: "#979797"
-                    text: "选择分类"
+                    text: genreSelect.selectedGenre.length == 0 ? "选择分类" : genreSelect.selectedGenre
                     anchors.left: parent.left
                     anchors.leftMargin: 10
+                    anchors.right: arrowGenre.left
+                    anchors.rightMargin: 2
+                    clip: true
                     font.pixelSize: 12
                     anchors.verticalCenter: parent.verticalCenter
                 }
@@ -298,21 +305,146 @@ Rectangle {
         Item {
 
             id: itemTagEdit
-            height: 80*btnTag.foldAnim
+            height: editState ? 60*btnTag.foldAnim : 0
             anchors.top: itemOption.bottom
             anchors.right: parent.right
             anchors.left: parent.left
+            clip: true
 
             Rectangle {
-                anchors.fill: parent
+
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 30
                 color: "#e9e9e9"
+
+                ListView {
+
+                    id: tagListView
+                    height: 20
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.right: itemAddTag.left
+                    anchors.leftMargin: 5
+                    anchors.rightMargin: 5
+                    clip: true
+                    orientation: ListView.Horizontal
+                    spacing: 2
+
+                    delegate: Rectangle {
+                        width: Math.max(textTag.width, 10)+10
+                        height: 20
+                        color: notes.getColor(modelData.charCodeAt(Math.max(modelData.length-2, 0)))
+                        radius: 10
+
+                        Text {
+                            id: textTag
+                            color: "white"
+                            font.pixelSize: 12
+                            font.wordSpacing : 1.5
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: modelData
+                            anchors.horizontalCenter: parent.horizontalCenter
+                        }
+                    }
+                }
+
+                Item {
+                    id: itemAddTag
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    anchors.right: parent.right
+                    width: 30
+
+                    Image {
+                        height: 24
+                        width: 24
+                        anchors.centerIn: parent
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                    }
+
+                }
+
             }
 
+            Rectangle {
 
-            /*onFocusChanged: {
-                if(!focus)
-                    btnTag.state = "closed";
-            }*/
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.topMargin: 30
+                height: 30
+                color: "#e0e0e0"
+
+                Text {
+                    id: textHintPop
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: 5
+                    text: "常用Tag:"
+                    color: "#333333"
+                }
+
+                ListView {
+
+                    id: tagPopListView
+                    height: 20
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: textHintPop.right
+                    anchors.right: parent.right
+                    anchors.leftMargin: 5
+                    anchors.rightMargin: 5
+                    clip: true
+                    orientation: ListView.Horizontal
+                    spacing: 2
+
+                    model: notes.popularTags;
+
+                    delegate: Rectangle {
+                        width: Math.max(textTagPop.width, 10)+10
+                        height: 20
+                        color: notes.getColor(modelData.charCodeAt(Math.max(modelData.length-2, 0)))
+                        radius: 10
+
+                        Text {
+                            id: textTagPop
+                            color: "white"
+                            font.pixelSize: 12
+                            font.wordSpacing : 1.5
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: modelData
+                            anchors.horizontalCenter: parent.horizontalCenter
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                var flag = true;
+                                for(var tag in tagListView.model)
+                                {
+                                    if(tag === modelData)
+                                    {
+                                        flag = false;
+                                        break;
+                                    }
+                                }
+                                if(flag)
+                                {
+                                    var model = tagListView.model;
+                                    model.push(modelData);
+                                    tagListView.model = model;
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+            }
 
         }
 
@@ -397,11 +529,12 @@ Rectangle {
 
                         height: 30
                         width: genreSelectListView.width
-                        color: "white"
+                        color: modelData === genreSelect.selectedGenre ? "#e8e8e8" :
+                                   mouseAreaGenre.pressed ? "#dddddd" : "white"
 
                         Rectangle {
                             visible: modelData !== 1
-                            color: "#DDDDDD"
+                            color: "#dddddd"
                             height: 1
                             width: parent.width
                             y: -1
@@ -418,6 +551,7 @@ Rectangle {
                         }
 
                         MouseArea {
+                            id: mouseAreaGenre
                             anchors.fill: parent
                             onClicked: {
                                 if(modelData === 1)
@@ -429,9 +563,6 @@ Rectangle {
                                     genreSelect.selectedGenre = modelData;
                                     btnGenre.state = "closed";
                                 }
-                            }
-                            onPressedChanged: {
-                                parent.color = pressed ? "#DDDDDD" : "white"
                             }
                         }
 

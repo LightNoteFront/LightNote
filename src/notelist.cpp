@@ -251,6 +251,7 @@ void NoteList::addPopularTag(QString tag, int weight)
         tagPop.remove(firstKey);
         popTags.remove(firstKey.second);
     }
+    emit popularTagsChanged();
 }
 
 QString NoteList::getColor(int index) const
