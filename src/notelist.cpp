@@ -17,7 +17,7 @@ NoteList::NoteList(WebRequest* request, QObject *parent)
               << "forestgreen" << "firebrick" << "gold" << "hotpink" << "lightseagreen" << "lime"
               << "limegreen" << "lightsalmon" << "mediumspringgreen" << "mediumpurple" << "navy"
               << "olive" << "orange" << "orangered" << "peru" << "plum" << "purple" << "red"
-              << "salmon" << "seagreen" << "steelblue" << "tomato" << "violet" << "yellow";
+              << "salmon" << "seagreen" << "steelblue" << "tomato" << "violet";
 }
 
 NoteList::~NoteList()
@@ -226,7 +226,7 @@ void NoteList::fullSave()
 
 }
 
-QString NoteList::getColor(int index)
+QString NoteList::getColor(int index) const
 {
     return colorList[index%colorList.size()];
 }
