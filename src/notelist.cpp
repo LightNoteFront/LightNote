@@ -57,6 +57,7 @@ QStringList NoteList::getGenreList() const
 void NoteList::addGenre(QString genre)
 {
     genreSet.insert(genre);
+    setNotesChanged();
 }
 
 QList<QObject*> NoteList::getGenreNotesFiltered(QString genreName) const
