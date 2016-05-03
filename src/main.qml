@@ -601,7 +601,7 @@ Window {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    subItem.loadUI("test.qml");
+                                    //subItem.loadUI("test.qml");//写崩了。。。
                                 }
                             }
                         }
