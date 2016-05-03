@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Window 2.2
+import LightNote.Note 1.0
 
 Window {
 
@@ -1150,8 +1151,11 @@ Window {
     Item {
         id: questionItem
 
+        property Note deletingNote: null
+
         function question(note)
         {
+            deletingNote = note
             questionText.text = "删除“" + note.title + "”？"
             questionItem.state = "notify"
         }
@@ -1233,6 +1237,8 @@ Window {
         MouseArea {
             anchors.fill: parent
             onClicked: {
+                notes.deleteNote(questionItem.deletingNote)
+                questionItem.deletingNote = null
                 questionItem.state = "closed"
             }
         }

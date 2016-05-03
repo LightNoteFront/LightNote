@@ -165,6 +165,31 @@ void NoteList::applyNote(Note* note)
     setNotesChanged();
 }
 
+void NoteList::deleteNote(Note* note)
+{
+    if(note == nullptr)
+        return;
+    if(note == currentNote)
+        currentNote = nullptr;
+    if(note == emptyNote)
+    {
+        delete emptyNote;
+        emptyNote = nullptr;
+    }
+    else
+    {
+        int index = noteList.indexOf(note);
+        if(index != -1)
+        {
+            delete noteList[index];
+            noteList.removeAt(index);
+            saveIndex();
+            QFile::remove(QString("notes/%0.json").arg(note->localId));
+            setNotesChanged();
+        }
+    }
+}
+
 void NoteList::fullLoad()
 {
     if(!QDir("notes/").exists())

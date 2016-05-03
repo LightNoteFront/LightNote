@@ -42,6 +42,7 @@ public:
     Q_INVOKABLE Note* createEmptyNote();
     Q_INVOKABLE void applyNote();
     Q_INVOKABLE void applyNote(Note* note);
+    Q_INVOKABLE void deleteNote(Note* note);
 
     Q_INVOKABLE void fullLoad();
     Q_INVOKABLE void fullSave();
@@ -71,14 +72,14 @@ protected:
     bool saveNote(Note* note);
     bool saveIndex();
 
-    QList<Note*> noteList;
+    QList<Note*> noteList; // 保存现有所有的Note对象（不包含emptyNote），清空时需释放对象
 
     QSet<QString> genreSet;
 
     QString filter;
 
-    Note* currentNote;
-    Note* emptyNote;
+    Note* currentNote; // 指向现在的Note对象，不对对象的释放负责
+    Note* emptyNote; // 保存一个Note对象，或者为空。清空时要delete或者转移对象。
 
     bool signalEnabled;
 
