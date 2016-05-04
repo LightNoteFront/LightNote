@@ -3,6 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QDebug>
+#include <QScreen>
 
 #include "notelist.h"
 #include "webrequest.h"
@@ -11,7 +12,9 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-    WebRequest request("http://10.50.141.13:3000/");
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+    WebRequest request("http://133.130.125.201:3000/");
     NoteList notes(&request);
 
     /*/
@@ -45,7 +48,19 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<Note>("LightNote.Note", 1, 0, "Note");
 
+    qDebug() << QGuiApplication::primaryScreen()->physicalDotsPerInch();
+
+    double screenScale = 1;
+#ifdef Q_OS_MAC
+    screenScale = 1.2;
+#endif
+#ifdef Q_OS_WIN32
+    screenScale = 1.2;
+#endif
+
     context->setContextProperty("notes", &notes);
+    context->setContextProperty("devicePixelRatio", QGuiApplication::primaryScreen()->physicalDotsPerInch() / 160 *
+                                QGuiApplication::primaryScreen()->devicePixelRatio() * screenScale);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

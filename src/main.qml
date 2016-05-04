@@ -10,9 +10,13 @@ Window {
     width: 320
     height: 568
 
-    minimumWidth: 300
-    minimumHeight: 532
+    //minimumWidth: 300
+    //minimumHeight: 532
 
+    function dp(px)
+    {
+        return px*devicePixelRatio;
+    }
 
     Item {
         id: mainItem
@@ -28,7 +32,7 @@ Window {
         Item {
             id: itemCardList
 
-            height: mainWindow.height - 45
+            height: mainWindow.height - dp(45)
             anchors.right: parent.right
             anchors.left: parent.left
             anchors.bottom: parent.bottom
@@ -49,8 +53,8 @@ Window {
 
                 anchors.fill: parent
 
-                anchors.bottomMargin: -(itemCardList.height - 50 + 45 * foldAnim)
-                spacing: -(itemCardList.height - 50 + 50 * foldAnim)
+                anchors.bottomMargin: -itemCardList.height + dp(50 - 45 * foldAnim)
+                spacing: -itemCardList.height + dp(50 - 50 * foldAnim)
 
                 state: "folded"
                 states: [
@@ -76,7 +80,8 @@ Window {
                 delegate: Item {
                     width: itemCardList.width
                     height: itemCardList.height * 1.01 +
-                            (cardList.selectedGenre==modelData ? (itemCardList.height - 20) * cardList.foldAnim : 0)
+                            (cardList.selectedGenre==modelData ?
+                                 (itemCardList.height - 20) * cardList.foldAnim : 0)
 
                     Rectangle {
                         id: rectCard
@@ -89,34 +94,36 @@ Window {
 
                         Text {
                             x: parent.width * 0.5 * 0.3
-                            y: 10
+                            y: dp(10)
                             text: modelData == 1 ? "新建分类" : modelData
                             font.bold : true
                             font.wordSpacing : 1.5
                             color: modelData === 1 ? "#909090" : notes.getColor(modelData.charCodeAt(Math.max(modelData.length-2, 0)))
-                            font.pixelSize: 20
+                            font.pixelSize: dp(20)
                         }
                         Text {
                             visible: modelData != 1
                             x: parent.width * 0.5 * 0.3
-                            y: 35
+                            y: dp(35)
                             text: noteListView.count + "项笔记"
                             font.wordSpacing : 1.3
                             color: modelData === 1 ? "black" : notes.getColor(modelData.charCodeAt(Math.max(modelData.length-2, 0)))
-                            font.pixelSize: 12
+                            font.pixelSize: dp(12)
                         }
+
                         Rectangle {
-                            y: 60
-                            width: parent.width
-                            anchors.horizontalCenter: parent.horizontalCenter
+                            y: dp(60)
+                            anchors.left: parent.left
+                            anchors.right: parent.right
                             height: 1
                             opacity: 0.2
                             color: "black"
                         }
 
                         MouseArea {
-                            height: 55
-                            width: parent.width
+                            height: dp(55)
+                            anchors.left: parent.left
+                            anchors.right: parent.right
                             onClicked: {
                                 if(modelData == 1)
                                 {
@@ -148,24 +155,26 @@ Window {
                             interactive: cardList.state == "opened"
                             opacity: cardList.foldAnim
 
-                            y: 70
-                            height: parent.height - 75
+                            y: dp(70)
+                            height: parent.height - dp(75)
                             anchors.left: parent.left
                             anchors.right: parent.right
-                            anchors.leftMargin: 30
-                            anchors.rightMargin: 30
+                            anchors.leftMargin: dp(30)
+                            anchors.rightMargin: dp(30)
 
                             model: notes.getGenreNotesFiltered(modelData)
                             spacing: 5
 
                             delegate: Item {
                                 id: textTitleItem
-                                width: parent.width
-                                height: 24
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                height: dp(24)
 
                                 Rectangle {
-                                    y: 22
-                                    width: parent.width
+                                    y: dp(22)
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
                                     height: 1
                                     opacity: 0.2
                                     color: "black"
@@ -181,27 +190,27 @@ Window {
                                         orientation: ListView.Horizontal
                                         anchors.top: parent.top
                                         anchors.bottom: parent.bottom
-                                        width: 22 * noteTagListView.count + 2
+                                        width: dp(22 * noteTagListView.count + 2)
                                         spacing: 2
 
                                         model: modelData.tags
 
                                         delegate: Item {
-                                            width: 20
-                                            height: 20
+                                            width: dp(20)
+                                            height: dp(20)
                                             Rectangle {
                                                 anchors.fill: parent
                                                 color: notes.getColor(modelData.charCodeAt(Math.max(modelData.length-2, 0)))
-                                                radius: 10
+                                                radius: dp(10)
                                             }
 
                                             Text {
                                                 color: "#ffffff"
-                                                font.pixelSize: 12
+                                                font.pixelSize: dp(12)
                                                 font.wordSpacing : 1.5
                                                 anchors.verticalCenter: parent.verticalCenter
-                                                text: modelData[0]
                                                 anchors.horizontalCenter: parent.horizontalCenter
+                                                text: modelData[0]
                                             }
                                         }
                                     }
@@ -211,7 +220,7 @@ Window {
                                         font.wordSpacing : 1.5
                                         text: modelData.title
                                         anchors.verticalCenter: parent.verticalCenter
-                                        font.pixelSize: 16
+                                        font.pixelSize: dp(16)
                                     }
                                 }
 
@@ -239,7 +248,7 @@ Window {
         Item {
             id: titleItem
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: mainWindow.height - 45
+            anchors.bottomMargin: mainWindow.height - dp(45)
             anchors.right: parent.right
             anchors.left: parent.left
             anchors.top: parent.top
@@ -276,13 +285,13 @@ Window {
 
             Image {
                 id: menuImage
-                width: 15
+                width: dp(15)
                 anchors.top: parent.top
-                anchors.topMargin: 15
+                anchors.topMargin: dp(15)
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 15
+                anchors.bottomMargin: dp(15)
                 anchors.left: parent.left
-                anchors.leftMargin: 20
+                anchors.leftMargin: dp(20)
                 source: "img/title/menu.png"
                 MouseArea {
                     anchors.fill: parent
@@ -295,11 +304,11 @@ Window {
             Rectangle {
                 id: searchRect
                 color: "#747575"
-                radius: 8
-                anchors.bottomMargin: 10
-                anchors.topMargin: 10
-                anchors.leftMargin: 55
-                anchors.rightMargin: 55
+                radius: dp(8)
+                anchors.bottomMargin: dp(10)
+                anchors.topMargin: dp(10)
+                anchors.leftMargin: dp(55)
+                anchors.rightMargin: dp(55)
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
@@ -320,7 +329,7 @@ Window {
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                     color: "#ffffff"
-                    font.pixelSize: 12
+                    font.pixelSize: dp(12)
                     selectionColor: "#555555"
                     onAccepted: {
                         notes.filter = searchContent.text
@@ -338,11 +347,11 @@ Window {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     opacity: 0.5
-                    spacing: 2
+                    spacing: dp(2)
 
                     Image {
-                        width: 12
-                        height: 12
+                        width: dp(12)
+                        height: dp(12)
                         anchors.verticalCenter: parent.verticalCenter
                         source: "img/title/search.png"
                     }
@@ -351,20 +360,20 @@ Window {
                         color: "#ffffff"
                         text: "搜索"
                         anchors.verticalCenter: parent.verticalCenter
-                        font.pixelSize: 12
+                        font.pixelSize: dp(12)
                     }
                 }
             }
 
             Image {
                 id: addNoteImag
-                width: 15
+                width: dp(15)
                 anchors.top: parent.top
-                anchors.topMargin: 15
+                anchors.topMargin: dp(15)
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 15
+                anchors.bottomMargin: dp(15)
                 anchors.right: parent.right
-                anchors.rightMargin: 20
+                anchors.rightMargin: dp(20)
                 source: "img/title/addNote.png"
 
                 MouseArea {
@@ -378,7 +387,7 @@ Window {
 
             Item {
                 id: searchFocusItem
-                height: mainItem.height - 45
+                height: mainItem.height - dp(45)
 
                 anchors.top: titleItem.bottom
                 anchors.left: parent.left
@@ -407,12 +416,12 @@ Window {
             states: [
                 State {
                     name: "opened"
-                    PropertyChanges { target: menuItem; x: -5; enabled: true }
+                    PropertyChanges { target: menuItem; x: dp(-5); enabled: true }
                     PropertyChanges { target: menuCancelItem; opacity: 0.5; enabled: true }
                 },
                 State {
                     name: "closed"
-                    PropertyChanges { target: menuItem; x: -250; enabled: false }
+                    PropertyChanges { target: menuItem; x: dp(-250); enabled: false }
                     PropertyChanges { target: menuCancelItem; opacity: 0; enabled: false }
                 }
             ]
@@ -431,7 +440,7 @@ Window {
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
                 anchors.top: parent.top
-                anchors.leftMargin: -5
+                anchors.leftMargin: dp(-5)
 
 
                 Rectangle {
@@ -449,15 +458,15 @@ Window {
 
             Item {
                 id: menuItem
-                width: 250
+                width: dp(250)
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                x: -250
+                x: dp(-250)
 
                 Rectangle {
                     anchors.fill: parent
                     color: "black"
-                    radius: 5
+                    radius: dp(5)
                     border.color: "#747474"
 
                 }
@@ -471,12 +480,12 @@ Window {
                     anchors.top: parent.top
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    height: 500
+                    height: dp(500)
                     source: "img/menu/menu.png"
 
                     Column {
                         id: menuColumn
-                        anchors.topMargin: 80
+                        anchors.topMargin: dp(80)
                         anchors.right: parent.right
                         anchors.left: parent.left
                         anchors.bottom: parent.bottom
@@ -484,18 +493,18 @@ Window {
 
                         Row {
                             id: innerMenuRow
-                            height: 100
-                            anchors.leftMargin: 20
-                            spacing: 15
+                            height: dp(100)
+                            anchors.leftMargin: dp(20)
+                            spacing: dp(15)
                             anchors.right: parent.right
                             anchors.left: parent.left
 
                             Image {
                                 id: userPhotoImage
-                                width: 70
-                                height: 70
-                                x: 20
-                                y: 15
+                                width: dp(70)
+                                height: dp(70)
+                                x: dp(20)
+                                y: dp(15)
 
                                 source: "img/menu/null.png"
 
@@ -510,14 +519,14 @@ Window {
 
                             Column {
                                 id: innerMenuInfofationColumn
-                                y: 15
-                                spacing: 15
+                                y: dp(15)
+                                spacing: dp(15)
 
                                 Text {
                                     id: userNameInformationText
                                     text: "未登陆"
                                     color: "#ffffff"
-                                    font.pixelSize: 24
+                                    font.pixelSize: dp(24)
                                     MouseArea {
                                         anchors.fill: parent
                                         onClicked: {
@@ -545,15 +554,15 @@ Window {
 
                         Column {
                             id: innerMenuColumn
-                            height: 45
-                            spacing: 10
-                            anchors.leftMargin: 20
+                            height: dp(45)
+                            spacing: dp(10)
+                            anchors.leftMargin: dp(20)
                             anchors.right: parent.right
                             anchors.left: parent.left
 
                             Rectangle {
                                 id: innerCutLineRectangle
-                                width: 215
+                                width: dp(215)
                                 height: 1
                                 color: "#747474"
                             }
@@ -568,8 +577,8 @@ Window {
 
                         Grid {
                             id: innerMenuGrid
-                            height: 100
-                            anchors.leftMargin: 20
+                            height: dp(100)
+                            anchors.leftMargin: dp(20)
                             anchors.right: parent.right
                             anchors.left: parent.left
 
@@ -579,7 +588,7 @@ Window {
 
                 Item {
                     id: footerMenuItem
-                    height: 40
+                    height: dp(40)
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -597,13 +606,13 @@ Window {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.right: parent.right
                         anchors.left: parent.left
-                        spacing: 15
-                        anchors.leftMargin: 20
+                        spacing: dp(15)
+                        anchors.leftMargin: dp(20)
 
                         Image {
                             id: footerSettingImage
-                            width: 20
-                            height: 20
+                            width: dp(20)
+                            height: dp(20)
                             anchors.verticalCenter: parent.verticalCenter
                             source: "img/menu/setting.png"
 
@@ -617,8 +626,8 @@ Window {
 
                         Image {
                             id: footerUploadImage
-                            width: 30
-                            height: 20
+                            width: dp(30)
+                            height: dp(20)
                             anchors.verticalCenter: parent.verticalCenter
                             source: "img/menu/upload.png"
 
@@ -737,15 +746,15 @@ Window {
             Item {
                 id: userStatement
 
-                width: 200
-                height: 300
+                width: dp(200)
+                height: dp(300)
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
 
                 Rectangle {
                     anchors.fill: parent
 
-                    radius: 8
+                    radius: dp(8)
 
                     color: "#606060"
 
@@ -759,18 +768,18 @@ Window {
                 Column {
                     id: userLoginInfo
                     anchors.top: parent.top
-                    anchors.topMargin: 40
+                    anchors.topMargin: dp(40)
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
 
-                    spacing: 40
+                    spacing: dp(40)
 
                     Text {
                         anchors.horizontalCenter: parent.horizontalCenter
                         text: "用户登录"
                         color: "#ffffff"
-                        font.pixelSize: 20
+                        font.pixelSize: dp(20)
                     }
 
                     Row {
@@ -784,8 +793,8 @@ Window {
                         Rectangle {
                             color: "#ffffff"
 
-                            width: 100
-                            height: 20
+                            width: dp(100)
+                            height: dp(20)
 
                             TextInput {
                                 id: userName
@@ -805,8 +814,8 @@ Window {
                         Rectangle {
                             color: "#ffffff"
 
-                            width: 100
-                            height: 20
+                            width: dp(100)
+                            height: dp(20)
 
                             TextInput {
                                 id: userPasswd
@@ -817,7 +826,7 @@ Window {
                     }
                     Row {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        spacing: 20
+                        spacing: dp(20)
                         Rectangle {
                             id: loginSubmitButton
 
@@ -829,8 +838,8 @@ Window {
                             }
 
                             color: "#ffffff"
-                            width: 40
-                            height: 20
+                            width: dp(40)
+                            height: dp(20)
 
                             MouseArea {
                                 anchors.fill: parent
@@ -852,8 +861,8 @@ Window {
                             }
 
                             color: "#ffffff"
-                            width: 40
-                            height: 20
+                            width: dp(40)
+                            height: dp(20)
 
                             MouseArea {
                                 anchors.fill: parent
@@ -870,15 +879,15 @@ Window {
             Item {
                 id: userRegister
 
-                width: 200
-                height: 400
+                width: dp(200)
+                height: dp(400)
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
 
                 Rectangle {
                     anchors.fill: parent
 
-                    radius: 8
+                    radius: dp(8)
 
                     color: "#606060"
 
@@ -895,18 +904,18 @@ Window {
                 Column {
                     id: userRegisterInfo
                     anchors.top: parent.top
-                    anchors.topMargin: 40
+                    anchors.topMargin: dp(40)
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
 
-                    spacing: 40
+                    spacing: dp(40)
 
                     Text {
                         anchors.horizontalCenter: parent.horizontalCenter
                         text: "用户注册"
                         color: "#ffffff"
-                        font.pixelSize: 20
+                        font.pixelSize: dp(20)
                     }
 
                     Row {
@@ -920,8 +929,8 @@ Window {
                         Rectangle {
                             color: "#ffffff"
 
-                            width: 100
-                            height: 20
+                            width: dp(100)
+                            height: dp(20)
 
                             TextInput {
                                 id: registerUserName
@@ -941,8 +950,8 @@ Window {
                         Rectangle {
                             color: "#ffffff"
 
-                            width: 100
-                            height: 20
+                            width: dp(100)
+                            height: dp(20)
 
                             TextInput {
                                 id: registerUserPasswd
@@ -963,8 +972,8 @@ Window {
                         Rectangle {
                             color: "#ffffff"
 
-                            width: 100
-                            height: 20
+                            width: dp(100)
+                            height: dp(20)
 
                             TextInput {
                                 id: registerUserPasswdTwo
@@ -985,8 +994,8 @@ Window {
                         Rectangle {
                             color: "#ffffff"
 
-                            width: 100
-                            height: 20
+                            width: dp(100)
+                            height: dp(20)
 
                             TextInput {
                                 id: registerUserPhoneNumber
@@ -997,7 +1006,7 @@ Window {
 
                     Row {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        spacing: 20
+                        spacing: dp(20)
                         Rectangle {
                             id: registerSubmitButton
 
@@ -1009,8 +1018,8 @@ Window {
                             }
 
                             color: "#ffffff"
-                            width: 40
-                            height: 20
+                            width: dp(40)
+                            height: dp(20)
 
                             MouseArea {
                                 anchors.fill: parent
@@ -1039,8 +1048,8 @@ Window {
                             }
 
                             color: "#ffffff"
-                            width: 40
-                            height: 20
+                            width: dp(40)
+                            height: dp(20)
 
                             MouseArea {
                                 anchors.fill: parent
@@ -1195,12 +1204,12 @@ Window {
         Rectangle {
             id: addingGenreRectangle
             color: "#ffffff"
-            radius: 8
+            radius: dp(8)
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             opacity: 0.8
-            width: 200
-            height: 100
+            width: dp(200)
+            height: dp(100)
 
             TextInput {
                 id: addingGenreText
@@ -1222,7 +1231,7 @@ Window {
             anchors.left: addingGenreRectangle.left
             anchors.right: addingGenreRectangle.right
             anchors.bottom: addingGenreRectangle.bottom
-            anchors.bottomMargin: 5
+            anchors.bottomMargin: dp(5)
             height: addingGenreRectangle.height / 4
             color: "#1685f8"
 
@@ -1230,14 +1239,14 @@ Window {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: -5
+                anchors.bottomMargin: dp(-5)
                 anchors.top: parent.top
-                radius: 5
+                radius: dp(5)
                 color: "#1685f8"
 
                 Text {
                     color: "#ffffff"
-                    font.pixelSize: 14
+                    font.pixelSize: dp(14)
                     text: "添加"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
@@ -1318,8 +1327,8 @@ Window {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             opacity: 0.8
-            width: 200
-            height: 100
+            width: dp(200)
+            height: dp(100)
 
             Text {
                 id: questionText
@@ -1340,7 +1349,7 @@ Window {
             anchors.left: questionRectangle.left
             anchors.right: questionRectangle.right
             anchors.bottom: questionRectangle.bottom
-            anchors.bottomMargin: 5
+            anchors.bottomMargin: dp(5)
             height: questionRectangle.height / 4
             color: "red"
 
@@ -1348,14 +1357,14 @@ Window {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: -5
+                anchors.bottomMargin: dp(-5)
                 anchors.top: parent.top
-                radius: 5
+                radius: dp(5)
                 color: "red"
 
                 Text {
                     color: "#ffffff"
-                    font.pixelSize: 14
+                    font.pixelSize: dp(14)
                     text: "删除"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
@@ -1423,18 +1432,18 @@ Window {
 
         Rectangle {
             color: "#262626"
-            radius: 8
+            radius: dp(8)
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             opacity: 0.8
-            width: 200
-            height: 150
+            width: dp(200)
+            height: dp(150)
 
             Text {
                 id: noticeText
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 15
+                font.pixelSize: dp(15)
                 color: "#ffffff"
             }
         }
