@@ -830,8 +830,11 @@ Window {
                         anchors.horizontalCenter: parent.horizontalCenter
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
+                            width: dp(60)
+                            horizontalAlignment: Text.AlignRight
                             text: "用户名："
                             color: "#ffffff"
+                            font.pixelSize: dp(16)
                         }
 
                         Rectangle {
@@ -843,6 +846,8 @@ Window {
                             TextInput {
                                 id: userName
                                 anchors.fill: parent
+                                verticalAlignment: Text.AlignVCenter
+                                font.pixelSize: dp(16)
                             }
                         }
                     }
@@ -851,8 +856,11 @@ Window {
                         anchors.horizontalCenter: parent.horizontalCenter
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            text: "    密码："
+                            width: dp(60)
+                            horizontalAlignment: Text.AlignRight
+                            text: "密码："
                             color: "#ffffff"
+                            font.pixelSize: dp(16)
                         }
 
                         Rectangle {
@@ -865,6 +873,8 @@ Window {
                                 id: userPasswd
                                 echoMode: TextInput.Password
                                 anchors.fill: parent
+                                verticalAlignment: Text.AlignVCenter
+                                font.pixelSize: dp(16)
                             }
                         }
                     }
@@ -926,7 +936,7 @@ Window {
             Item {
                 id: userRegister
 
-                width: dp(200)
+                width: dp(240)
                 height: dp(400)
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
@@ -981,19 +991,24 @@ Window {
                         anchors.horizontalCenter: parent.horizontalCenter
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            text: "   用户名："
+                            width: dp(80)
+                            horizontalAlignment: Text.AlignRight
+                            text: "用户名："
                             color: "#ffffff"
+                            font.pixelSize: dp(16)
                         }
 
                         Rectangle {
                             color: "#ffffff"
 
-                            width: dp(100)
+                            width: dp(120)
                             height: dp(20)
 
                             TextInput {
                                 id: registerUserName
                                 anchors.fill: parent
+                                verticalAlignment: Text.AlignVCenter
+                                font.pixelSize: dp(16)
                             }
                         }
                     }
@@ -1002,20 +1017,25 @@ Window {
                         anchors.horizontalCenter: parent.horizontalCenter
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            text: "       密码："
+                            width: dp(80)
+                            horizontalAlignment: Text.AlignRight
+                            text: "密码："
                             color: "#ffffff"
+                            font.pixelSize: dp(16)
                         }
 
                         Rectangle {
                             color: "#ffffff"
 
-                            width: dp(100)
+                            width: dp(120)
                             height: dp(20)
 
                             TextInput {
                                 id: registerUserPasswd
                                 echoMode: TextInput.Password
                                 anchors.fill: parent
+                                verticalAlignment: Text.AlignVCenter
+                                font.pixelSize: dp(16)
                             }
                         }
                     }
@@ -1024,20 +1044,25 @@ Window {
                         anchors.horizontalCenter: parent.horizontalCenter
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
+                            width: dp(80)
+                            horizontalAlignment: Text.AlignRight
                             text: "再次输入："
                             color: "#ffffff"
+                            font.pixelSize: dp(16)
                         }
 
                         Rectangle {
                             color: "#ffffff"
 
-                            width: dp(100)
+                            width: dp(120)
                             height: dp(20)
 
                             TextInput {
                                 id: registerUserPasswdTwo
                                 echoMode: TextInput.Password
                                 anchors.fill: parent
+                                verticalAlignment: Text.AlignVCenter
+                                font.pixelSize: dp(16)
                             }
                         }
                     }
@@ -1046,19 +1071,24 @@ Window {
                         anchors.horizontalCenter: parent.horizontalCenter
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
+                            width: dp(80)
+                            horizontalAlignment: Text.AlignRight
                             text: "电话号码："
                             color: "#ffffff"
+                            font.pixelSize: dp(16)
                         }
 
                         Rectangle {
                             color: "#ffffff"
 
-                            width: dp(100)
+                            width: dp(120)
                             height: dp(20)
 
                             TextInput {
                                 id: registerUserPhoneNumber
                                 anchors.fill: parent
+                                verticalAlignment: Text.AlignVCenter
+                                font.pixelSize: dp(16)
                             }
                         }
                     }

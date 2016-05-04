@@ -39,6 +39,10 @@ Rectangle {
         }
     }
 
+    Keys.onBackPressed: {
+        mainItem.doExit();
+    }
+
     Item {
 
         id: itemContainer
@@ -92,7 +96,9 @@ Rectangle {
                     verticalAlignment: Text.AlignVCenter
                     font.pixelSize: dp(12)
                     selectionColor: "#555555"
-
+                    onTextChanged: {
+                        text = text.replace("\"", "").replace("\\", "");
+                    }
                 }
 
                 Row {
@@ -644,6 +650,9 @@ Rectangle {
                 anchors.verticalCenterOffset: -14
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
+                onTextChanged: {
+                    text = text.replace("\"", "").replace("\\", "");
+                }
             }
 
             MouseArea {
@@ -761,6 +770,9 @@ Rectangle {
                 anchors.verticalCenterOffset: -14
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
+                onTextChanged: {
+                    text = text.replace("\"", "").replace("\\", "");
+                }
             }
 
             MouseArea {
