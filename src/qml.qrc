@@ -20,5 +20,8 @@
         <file>img/card/line.png</file>
         <file>img/card/ball.png</file>
         <file>img/edit/add.png</file>
+        <file>img/LOGO.png</file>
+        <file>img/splash.png</file>
+        <file>splash.qml</file>
     </qresource>
 </RCC>

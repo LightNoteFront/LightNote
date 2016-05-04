@@ -4,6 +4,8 @@
 #include <QQmlContext>
 #include <QDebug>
 #include <QScreen>
+#include <QEventLoop>
+#include <QTimer>
 
 #include "notelist.h"
 #include "webrequest.h"
@@ -11,8 +13,6 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-
-    //QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     WebRequest request("http://133.130.125.201:3000/");
     NoteList notes(&request);
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     context->setContextProperty("devicePixelRatio", QGuiApplication::primaryScreen()->physicalDotsPerInch() / 160 *
                                 QGuiApplication::primaryScreen()->devicePixelRatio() * screenScale);
 
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    engine.load(QUrl("qrc:/main.qml"));
 
     return app.exec();
 }
