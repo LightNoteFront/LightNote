@@ -358,13 +358,17 @@ Rectangle {
                     width: dp(30)
 
                     Image {
-                        height: dp(24)
-                        width: dp(24)
+                        height: dp(20)
+                        width: dp(20)
                         anchors.centerIn: parent
+                        source: "img/edit/add.png"
                     }
 
                     MouseArea {
                         anchors.fill: parent
+                        onClicked: {
+                            addTag.add()
+                        }
                     }
 
                 }
@@ -372,6 +376,7 @@ Rectangle {
             }
 
             Rectangle {
+                id: rectangle1
 
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -795,7 +800,22 @@ Rectangle {
                 onClicked: {
                     if (addingTagText.text != "")
                     {
-                        //notes.addTag(addingTagText.text) //interface
+                        var flag = true;
+                        for(var tag in tagListView.model)
+                        {
+                            if(tag === addingTagText.text)
+                            {
+                                flag = false;
+                                break;
+                            }
+                        }
+                        if(flag)
+                        {
+                            var model = tagListView.model;
+                            model.push(addingTagText.text);
+                            tagListView.model = model;
+                        }
+
                         addingTagText.text = ""
                         addingTagText.focus = false
                         addTag.state = "closed"

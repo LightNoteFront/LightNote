@@ -28,6 +28,7 @@ public:
 
     Q_INVOKABLE QStringList getGenreList() const;
     Q_INVOKABLE void addGenre(QString genre);
+    Q_INVOKABLE void deleteGenre(QString genre);
 
     Q_INVOKABLE QList<QObject*> getGenreNotesFiltered(QString genreName) const;
     Q_INVOKABLE QList<QObject*> getGenreNotes(QString genreName) const;

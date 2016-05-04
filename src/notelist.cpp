@@ -197,6 +197,24 @@ void NoteList::addGenre(QString genre)
     setNotesChanged();
 }
 
+void NoteList::deleteGenre(QString genre)
+{
+    setSignalEnabled(false);
+    genreSet.remove(genre);
+
+    for (auto note : noteList)
+    {
+        if (note->genre == genre)
+        {
+            note->genre = "无分类";
+            addGenre("无分类");
+            saveNote(note);
+        }
+    }
+    setSignalEnabled(true);
+    setNotesChanged();
+}
+
 QList<QObject*> NoteList::getGenreNotesFiltered(QString genreName) const
 {
     QList<QObject*> res;
