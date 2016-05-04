@@ -34,8 +34,6 @@ NoteList::NoteList(WebRequest* request, QObject *parent)
         req->registerUrl("upload", "Sync_Upload");
     }
 
-    currentUser = QSettings("").property("user").toString();
-
 }
 
 NoteList::~NoteList()
@@ -95,7 +93,7 @@ void NoteList::sync()
             {
                 req->get("newnote", objUser, [note, &wait](const QJsonObject& data)
                 {
-                    qDebug() << "newed " << data;
+                    qDebug() << "newed " << data["noteID"].toInt(-1);
                     note->webId = data["noteID"].toInt(-1);
                     QTimer::singleShot(0, &wait, SLOT(quit()));
                 });
@@ -105,6 +103,7 @@ void NoteList::sync()
                     qDebug() << "note #" << note->localId << " " << note->title << " get id failed";
                     continue;
                 }
+                qDebug() << "newnote done";
             }
 
             int webTime = timeMap.value(note->webId, 0);
@@ -113,15 +112,19 @@ void NoteList::sync()
                 // 服务器的时间较新，下载笔记
                 QJsonObject objID;
                 objID["noteID"] = note->webId;
+                qDebug() << "downloading " << note->webId;
                 req->get("download", objID, [note, &wait](const QJsonObject& data)
                 {
-                    qDebug() << "downloaded " << data;
+                    if(data.empty() || !data["result"].toBool())
+                        return;
+                    qDebug() << "downloaded " << data["noteID"].toInt(-1);
                     note->read(data);
                     QTimer::singleShot(0, &wait, SLOT(quit()));
                 });
                 wait.exec();
                 note->webTime = webTime;
                 saveNote(note);
+                qDebug() << "download done";
             }
             else if((note->webTime > webTime || note->webTime == 0) && note->authorId == currentUser)
             {
@@ -131,22 +134,25 @@ void NoteList::sync()
                 qDebug() << "uploading " << objNote;
                 req->get("upload", objNote, [note, &wait](const QJsonObject& data)
                 {
-                    qDebug() << "uploaded " << data;
+                    qDebug() << "uploaded " << data["noteID"].toInt(-1);
                     note->webTime = data.value("lastEditTime").toInt(note->webTime);
                     QTimer::singleShot(0, &wait, SLOT(quit()));
                 });
                 wait.exec();
                 saveNote(note);
+                qDebug() << "upload done";
             }
 
             timeMap.remove(note->webId);
 
         }
 
-        for(int webId : timeMap)
+        while(!timeMap.empty())
         {
+            int webId = timeMap.firstKey();
             QJsonObject objID;
             objID["noteID"] = webId;
+            qDebug() << "new downloading " << webId;
             req->get("download", objID, [this, &wait, &timeMap, webId](const QJsonObject& data)
             {
                 qDebug() << "new downloaded " << data;
@@ -156,6 +162,8 @@ void NoteList::sync()
                 QTimer::singleShot(0, &wait, SLOT(quit()));
             });
             wait.exec();
+            timeMap.remove(webId);
+            qDebug() << "new download done";
         }
 
         QList<int> deleted;
@@ -178,6 +186,8 @@ void NoteList::sync()
             deletedNotes.remove(webId);
         }
 
+        qDebug() << "Done.";
+
         setNotesChanged();
 
     });
@@ -194,6 +204,7 @@ QStringList NoteList::getGenreList() const
 void NoteList::addGenre(QString genre)
 {
     genreSet.insert(genre);
+    saveIndex();
     setNotesChanged();
 }
 
@@ -201,7 +212,6 @@ void NoteList::deleteGenre(QString genre)
 {
     setSignalEnabled(false);
     genreSet.remove(genre);
-
     for (auto note : noteList)
     {
         if (note->genre == genre)
@@ -211,6 +221,7 @@ void NoteList::deleteGenre(QString genre)
             saveNote(note);
         }
     }
+    saveIndex();
     setSignalEnabled(true);
     setNotesChanged();
 }
@@ -338,7 +349,8 @@ void NoteList::deleteNote(Note* note)
         int index = noteList.indexOf(note);
         if(index != -1)
         {
-            deletedNotes.insert(index);
+            if(noteList[index]->webId != -1)
+                deletedNotes.insert(noteList[index]->webId);
             delete noteList[index];
             noteList.removeAt(index);
             saveIndex();
@@ -367,6 +379,8 @@ void NoteList::fullLoad()
         QJsonArray arrIdx = obj["index"].toArray();
         QJsonArray arrGenre = obj["genre"].toArray();
         QJsonArray arrDel = obj["deleted"].toArray();
+
+        currentUser = obj["user"].toString();
 
         for(int i=0; i<arrIdx.size(); ++i)
         {
@@ -427,6 +441,8 @@ void NoteList::fullSave()
         obj.insert("index", arrIdx);
         obj.insert("genre", arrGenre);
         obj.insert("deleted", arrDel);
+
+        obj.insert("user", currentUser);
 
         QJsonDocument doc(obj);
         file.write(doc.toJson());
@@ -559,6 +575,7 @@ bool NoteList::saveIndex()
         obj.insert("index", arrIdx);
         obj.insert("genre", arrGenre);
         obj.insert("deleted", arrDel);
+        obj.insert("user", currentUser);
         QJsonDocument doc(obj);
         file.write(doc.toJson());
         file.close();
@@ -572,7 +589,7 @@ void NoteList::setCurrentUser(QString name, bool success)
     if(success)
     {
         currentUser = name;
-        QSettings().setProperty("user", currentUser);
+        saveIndex();
         emit userChanged();
     }
     emit loginFinished(success);
