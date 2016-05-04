@@ -1308,11 +1308,13 @@ Window {
                     {
                         notes.addGenre(addingGenreText.text)
                         addingGenreText.text = ""
+                        addingGenreText.focus = false
                         addGenre.state = "closed"
                     }
                     else
                     {
                         addingGenreText.text = ""
+                        addingGenreText.focus = true
                         noticeItem.notify("分类名不能为空！")
                     }
                 }

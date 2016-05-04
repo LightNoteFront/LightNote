@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    //QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     WebRequest request("http://133.130.125.201:3000/");
     NoteList notes(&request);
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 
     double screenScale = 1;
 #ifdef Q_OS_MAC
-    screenScale = 1.2;
+    screenScale = 0.8;
 #endif
 #ifdef Q_OS_WIN32
     screenScale = 1.2;
