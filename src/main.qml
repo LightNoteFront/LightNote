@@ -235,7 +235,7 @@ Window {
                                 MouseArea {
                                     anchors.fill: parent
                                     onPressAndHold: {
-                                        questionItem.question(modelData)
+                                        noteDeleteItem.noteDelete(modelData)
                                     }
 
                                     onClicked: {
