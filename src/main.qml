@@ -43,8 +43,8 @@ Window {
                 function setSelected(genre)
                 {
                     if(genre !== null)
-                        selectedGenre = genre;
-                    state = (genre === null ? "folded" : "opened");
+                        selectedGenre = genre
+                    state = (genre === null ? "folded" : "opened")
                 }
 
                 anchors.fill: parent
@@ -76,7 +76,7 @@ Window {
                 delegate: Item {
                     width: itemCardList.width
                     height: itemCardList.height * 1.01 +
-                            (cardList.selectedGenre==modelData ? (itemCardList.height - 20) * cardList.foldAnim : 0);
+                            (cardList.selectedGenre==modelData ? (itemCardList.height - 20) * cardList.foldAnim : 0)
 
                     Rectangle {
                         id: rectCard
@@ -120,11 +120,11 @@ Window {
                             onClicked: {
                                 if(modelData == 1)
                                 {
-                                    // 新建分类
+                                    addGenre.add()
                                 }
                                 else
                                 {
-                                    cardList.setSelected(cardList.state=="opened" ? null : modelData);
+                                    cardList.setSelected(cardList.state=="opened" ? null : modelData)
                                 }
                             }
                         }
@@ -132,10 +132,10 @@ Window {
                         Connections {
                             target: notes
                             onNotesChanged: {
-                                noteListView.model = notes.getGenreNotesFiltered(modelData);
+                                noteListView.model = notes.getGenreNotesFiltered(modelData)
                             }
                             onFilterChanged: {
-                                noteListView.model = notes.getGenreNotesFiltered(modelData);
+                                noteListView.model = notes.getGenreNotesFiltered(modelData)
                             }
                         }
                         //各项笔记
@@ -222,8 +222,8 @@ Window {
                                     }
 
                                     onClicked: {
-                                        notes.currentNote = modelData;
-                                        subItem.loadUI("edit.qml");
+                                        notes.currentNote = modelData
+                                        subItem.loadUI("edit.qml")
                                     }
                                 }
 
@@ -323,7 +323,7 @@ Window {
                     font.pixelSize: 12
                     selectionColor: "#555555"
                     onAccepted: {
-                        notes.filter = searchContent.text;
+                        notes.filter = searchContent.text
                         titleItem.state = "closed"
                     }
                     onFocusChanged: {
@@ -370,8 +370,8 @@ Window {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        notes.currentNote = null;
-                        subItem.loadUI("edit.qml");
+                        notes.currentNote = null
+                        subItem.loadUI("edit.qml")
                     }
                 }
             }
@@ -392,7 +392,7 @@ Window {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        notes.filter = searchContent.text;
+                        notes.filter = searchContent.text
                         titleItem.state = "closed"
                     }
                 }
@@ -610,7 +610,7 @@ Window {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    //subItem.loadUI("test.qml");//写崩了。。。
+                                    //subItem.loadUI("test.qml")//写崩了。。。
                                 }
                             }
                         }
@@ -1101,8 +1101,8 @@ Window {
 
         function loadUI(url)
         {
-            testLoader.source = url;
-            subItem.state = "opened";
+            testLoader.source = url
+            subItem.state = "opened"
         }
 
         Loader {
@@ -1114,8 +1114,8 @@ Window {
         Connections {
             target: testLoader.item
             onExit: {
-                subItem.enabled = false;
-                subItem.state = "closed";
+                subItem.enabled = false
+                subItem.state = "closed"
             }
         }
         //以下这些是不是可以删除了
@@ -1139,8 +1139,8 @@ Window {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    subItem.enabled = false;
-                    subItem.state = "closed";
+                    subItem.enabled = false
+                    subItem.state = "closed"
                 }
             }
 
@@ -1148,100 +1148,120 @@ Window {
 
     }
 
-//    Item {
-//        id: addGenre
+    Item {
+        id: addGenre
 
-//        property string addingGenre: ""
+        function add()
+        {
+            addGenre.state = "adding"
+        }
+        anchors.fill: parent
 
-//        function question(note)
-//        {
-//            addingGenre = note
-//            questionText.text = ""
-//            addGenre.state = "question"
-//        }
-//        anchors.fill: parent
+        state: "closed"
+        states: [
+            State {
+                name: "adding"
+                PropertyChanges { target: addGenre; opacity: 1; enabled: true }
+            },
+            State {
+                name: "closed"
+                PropertyChanges { target: addGenre; opacity: 0; enabled: false }
+            }
+        ]
 
-//        state: "closed"
-//        states: [
-//            State {
-//                name: "question"
-//                PropertyChanges { target: addGenre; opacity: 1; enabled: true }
-//            },
-//            State {
-//                name: "closed"
-//                PropertyChanges { target: addGenre; opacity: 0; enabled: false }
-//            }
-//        ]
+        transitions: [
+            Transition {
+                to: "*"
+                PropertyAnimation {
+                    target: addGenre
+                    duration: 100; properties: "opacity"; easing.type: Easing.Linear
+                }
+            }
+        ]
 
-//        transitions: [
-//            Transition {
-//                to: "*"
-//                PropertyAnimation {
-//                    target: addGenre
-//                    duration: 100; properties: "opacity"; easing.type: Easing.Linear
-//                }
-//            }
-//        ]
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                addGenre.state = "closed"
+            }
+        }
 
-//        Rectangle {
-//            color: "#262626"
-//            anchors.fill: parent
-//            opacity: 0.5
-//        }
+        Rectangle {
+            color: "#262626"
+            anchors.fill: parent
+            opacity: 0.5
+        }
 
-//        Rectangle {
-//            id: addingGenreRectangle
-//            color: "#262626"
-//            radius: 8
-//            anchors.horizontalCenter: parent.horizontalCenter
-//            anchors.verticalCenter: parent.verticalCenter
-//            opacity: 0.8
-//            width: 200
-//            height: 100
+        Rectangle {
+            id: addingGenreRectangle
+            color: "#ffffff"
+            radius: 8
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            opacity: 0.8
+            width: 200
+            height: 100
 
-//            Text {
-//                id: addingGenreText
-//                color: "#ffffff"
-//                anchors.verticalCenterOffset: -14
-//                anchors.horizontalCenter: parent.horizontalCenter
-//                anchors.verticalCenter: parent.verticalCenter
-//            }
-//        }
-//        Rectangle {
-//            anchors.left: questionRectangle.left
-//            anchors.right: questionRectangle.right
-//            anchors.bottom: questionRectangle.bottom
-//            anchors.bottomMargin: 5
-//            height: questionRectangle.height / 4
-//            color: "red"
-//            Rectangle {
-//                anchors.left: parent.left
-//                anchors.right: parent.right
-//                anchors.bottom: parent.bottom
-//                anchors.bottomMargin: -5
-//                anchors.top: parent.top
-//                radius: 5
-//                color: "red"
+            TextInput {
+                id: addingGenreText
+                color: "#979797"
+                selectionColor: "#555555"
+                anchors.verticalCenterOffset: -14
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+            }
 
-//                Text {
-//                    color: "#ffffff"
-//                    font.pixelSize: 14
-//                    text: "删除"
-//                    anchors.horizontalCenter: parent.horizontalCenter
-//                    anchors.verticalCenter: parent.verticalCenter
-//                }
-//            }
-//        }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    addingGenreText.focus = true
+                }
+            }
+        }
+        Rectangle {
+            anchors.left: addingGenreRectangle.left
+            anchors.right: addingGenreRectangle.right
+            anchors.bottom: addingGenreRectangle.bottom
+            anchors.bottomMargin: 5
+            height: addingGenreRectangle.height / 4
+            color: "#1685f8"
 
-//        MouseArea {
-//            anchors.fill: parent
-//            onClicked: {
-//                notes.deleteNote(addGenre.deletingNote)
-//                addGenre.deletingNote = null
-//                addGenre.state = "closed"
-//            }
-//        }
-//    }
+            Rectangle {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: -5
+                anchors.top: parent.top
+                radius: 5
+                color: "#1685f8"
+
+                Text {
+                    color: "#ffffff"
+                    font.pixelSize: 14
+                    text: "添加"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    if (addingGenreText.text != "")
+                    {
+                        notes.addGenre(addingGenreText.text)
+                        addingGenreText.text = ""
+                        addGenre.state = "closed"
+                    }
+                    else
+                    {
+                        addingGenreText.text = ""
+                        noticeItem.notify("分类名不能为空！")
+                    }
+                }
+            }
+        }
+    }
 
     Item {
         id: questionItem
