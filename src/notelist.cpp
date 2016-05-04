@@ -5,6 +5,8 @@
 #include <QJsonDocument>
 #include <QDir>
 #include <QSettings>
+#include <QSemaphore>
+#include <QTimer>
 
 NoteList::NoteList(WebRequest* request, QObject *parent)
     : QObject(parent)
@@ -25,11 +27,14 @@ NoteList::NoteList(WebRequest* request, QObject *parent)
     {
         req->registerUrl("login", "Login");
         req->registerUrl("register", "NewUser");
+        req->registerUrl("newnote", "NewNote");
+        req->registerUrl("deletenote", "DeleteNote");
+        req->registerUrl("brief", "Brief");
         req->registerUrl("download", "Sync_Download");
         req->registerUrl("upload", "Sync_Upload");
     }
 
-    currentUser = QSettings().property("user").toString();
+    currentUser = QSettings("").property("user").toString();
 
 }
 
@@ -52,17 +57,131 @@ void NoteList::clear()
 
 void NoteList::sync()
 {
+    if(currentUser.isEmpty())
+        return;
+
     currentNote = nullptr;
     emit currentNoteChanged();
 
     fullSave();
 
-    req->send("http://localhost/test.json", QJsonObject(), [this](const QJsonObject& data)
+    QJsonObject objUser;
+    objUser["userID"] = currentUser;
+    req->get("brief", objUser, [this](const QJsonObject& data)
     {
-        createNote(data);
+        qDebug() << data;
+        if(data.size() == 0 || !data["result"].toBool(true))
+            return;
+
+        QMap<int, int> timeMap;
+        QJsonArray arr = data["array"].toArray();
+        for(int i=0; i<arr.size(); ++i)
+        {
+            QJsonObject brief = arr.at(i).toObject();
+            timeMap[brief["noteID"].toInt()] = brief["lastEditTime"].toInt();
+        }
+
+        QJsonObject objUser;
+        objUser["userID"] = currentUser;
+
+        QEventLoop wait;
+
+        for(Note* note : noteList)
+        {
+            if(note->authorId.isEmpty())
+                note->authorId = currentUser;
+
+            if(note->webId == -1 || !timeMap.contains(note->webId))
+            {
+                req->get("newnote", objUser, [note, &wait](const QJsonObject& data)
+                {
+                    qDebug() << "newed " << data;
+                    note->webId = data["noteID"].toInt(-1);
+                    QTimer::singleShot(0, &wait, SLOT(quit()));
+                });
+                wait.exec();
+                if(note->webId == -1)
+                {
+                    qDebug() << "note #" << note->localId << " " << note->title << " get id failed";
+                    continue;
+                }
+            }
+
+            int webTime = timeMap.value(note->webId, 0);
+            if(note->webTime < webTime)
+            {
+                // 服务器的时间较新，下载笔记
+                QJsonObject objID;
+                objID["noteID"] = note->webId;
+                req->get("download", objID, [note, &wait](const QJsonObject& data)
+                {
+                    qDebug() << "downloaded " << data;
+                    note->read(data);
+                    QTimer::singleShot(0, &wait, SLOT(quit()));
+                });
+                wait.exec();
+                note->webTime = webTime;
+                saveNote(note);
+            }
+            else if((note->webTime > webTime || note->webTime == 0) && note->authorId == currentUser)
+            {
+                // 本体时间较新，上传笔记，笔记作者必须是当前登录用户
+                QJsonObject objNote;
+                note->write(objNote);
+                qDebug() << "uploading " << objNote;
+                req->get("upload", objNote, [note, &wait](const QJsonObject& data)
+                {
+                    qDebug() << "uploaded " << data;
+                    note->webTime = data.value("lastEditTime").toInt(note->webTime);
+                    QTimer::singleShot(0, &wait, SLOT(quit()));
+                });
+                wait.exec();
+                saveNote(note);
+            }
+
+            timeMap.remove(note->webId);
+
+        }
+
+        for(int webId : timeMap)
+        {
+            QJsonObject objID;
+            objID["noteID"] = webId;
+            req->get("download", objID, [this, &wait, &timeMap, webId](const QJsonObject& data)
+            {
+                qDebug() << "new downloaded " << data;
+                Note* note = createNote(data);
+                note->webTime = timeMap[webId];
+                saveNote(note);
+                QTimer::singleShot(0, &wait, SLOT(quit()));
+            });
+            wait.exec();
+        }
+
+        QList<int> deleted;
+        for(int webId : deletedNotes)
+        {
+            // 被删除的笔记
+            QJsonObject objID;
+            objID["noteID"] = webId;
+            req->get("deletenote", objID, [&wait, &deleted, webId](const QJsonObject& data)
+            {
+                qDebug() << "deleted " << data;
+                if(data["result"].toBool())
+                    deleted.append(webId);
+                QTimer::singleShot(0, &wait, SLOT(quit()));
+            });
+            wait.exec();
+        }
+        for(int webId : deleted)
+        {
+            deletedNotes.remove(webId);
+        }
+
+        setNotesChanged();
+
     });
 
-    setNotesChanged();
 }
 
 QStringList NoteList::getGenreList() const
@@ -126,6 +245,7 @@ Note* NoteList::createNote(const QJsonObject& json, int id)
 {
     Note* res = new Note(this, id);
     res->read(json);
+    res->validate();
     addNote(res);
     genreSet.insert(res->genre);
     setNotesChanged();
@@ -168,6 +288,7 @@ void NoteList::applyNote()
         addNote(emptyNote);
         emptyNote = nullptr;
     }
+    currentNote->webTime++;
     currentNote->validate();
     saveNote(currentNote);
     genreSet.insert(currentNote->genre);
@@ -199,6 +320,7 @@ void NoteList::deleteNote(Note* note)
         int index = noteList.indexOf(note);
         if(index != -1)
         {
+            deletedNotes.insert(index);
             delete noteList[index];
             noteList.removeAt(index);
             saveIndex();
@@ -226,6 +348,7 @@ void NoteList::fullLoad()
         QJsonObject obj = QJsonDocument::fromJson(raw).object();
         QJsonArray arrIdx = obj["index"].toArray();
         QJsonArray arrGenre = obj["genre"].toArray();
+        QJsonArray arrDel = obj["deleted"].toArray();
 
         for(int i=0; i<arrIdx.size(); ++i)
         {
@@ -242,10 +365,16 @@ void NoteList::fullLoad()
 
         for(int i=0; i<arrGenre.size(); ++i)
         {
-            genreSet.insert(arrIdx.at(i).toString());
+            genreSet.insert(arrIdx.at(i).toString(""));
         }
+        genreSet.remove("");
 
-        genreSet.remove(QString());
+        deletedNotes.clear();
+        for(int i=0; i<arrDel.size(); ++i)
+        {
+            deletedNotes.insert(arrDel.at(i).toInt(-1));
+        }
+        deletedNotes.remove(-1);
 
     }
 
@@ -263,7 +392,7 @@ void NoteList::fullSave()
     if(file.open(QFile::WriteOnly))
     {
         QJsonObject obj;
-        QJsonArray arrIdx, arrGenre;
+        QJsonArray arrIdx, arrGenre, arrDel;
 
         for(int i=0; i<noteList.size(); ++i)
         {
@@ -274,8 +403,12 @@ void NoteList::fullSave()
         for(auto genre : genreSet)
             arrGenre.append(genre);
 
+        for(int id : deletedNotes)
+            arrDel.append(id);
+
         obj.insert("index", arrIdx);
         obj.insert("genre", arrGenre);
+        obj.insert("deleted", arrDel);
 
         QJsonDocument doc(obj);
         file.write(doc.toJson());
@@ -323,16 +456,10 @@ void NoteList::loginUser(QString username, QString password)
     QJsonObject obj;
     obj["userID"] = username;
     obj["userPassword"] = password;
-    req->get("login", obj, [this, &username](const QJsonObject& reply)
+    req->get("login", obj, [this, username](const QJsonObject& reply)
     {
         bool result = reply["result"].toBool();
-        if(result)
-        {
-            currentUser = username;
-            QSettings().setProperty("user", currentUser);
-            emit userChanged();
-        }
-        emit loginFinished(result);
+        setCurrentUser(username, result);
     });
 }
 
@@ -342,16 +469,10 @@ void NoteList::registerUser(QString username, QString password, QString phoneno)
     obj["userID"] = username;
     obj["userPassword"] = password;
     obj["userPhoneNumber"] = phoneno;
-    req->get("register", obj, [this, &username](const QJsonObject& reply)
+    req->get("register", obj, [this, username](const QJsonObject& reply)
     {
         bool result = reply["result"].toBool();
-        if(result)
-        {
-            currentUser = username;
-            QSettings().setProperty("user", currentUser);
-            emit userChanged();
-        }
-        emit loginFinished(result);
+        setCurrentUser(username, result);
     });
 }
 
@@ -410,19 +531,33 @@ bool NoteList::saveIndex()
     if(file.open(QFile::WriteOnly))
     {
         QJsonObject obj;
-        QJsonArray arrIdx, arrGenre;
+        QJsonArray arrIdx, arrGenre, arrDel;
         for(int i=0; i<noteList.size(); ++i)
             arrIdx.append(noteList[i]->localId);
         for(auto genre : genreSet)
             arrGenre.append(genre);
+        for(int id : deletedNotes)
+            arrDel.append(id);
         obj.insert("index", arrIdx);
         obj.insert("genre", arrGenre);
+        obj.insert("deleted", arrDel);
         QJsonDocument doc(obj);
         file.write(doc.toJson());
         file.close();
         return true;
     }
     return false;
+}
+
+void NoteList::setCurrentUser(QString name, bool success)
+{
+    if(success)
+    {
+        currentUser = name;
+        QSettings().setProperty("user", currentUser);
+        emit userChanged();
+    }
+    emit loginFinished(success);
 }
 
 

@@ -15,7 +15,7 @@ class NoteList : public QObject
     Q_PROPERTY(Note* currentNote READ getCurrentNote WRITE setCurrentNote NOTIFY currentNoteChanged)
     Q_PROPERTY(QString filter MEMBER filter NOTIFY filterChanged)
     Q_PROPERTY(QStringList popularTags READ getPopularTags NOTIFY popularTagsChanged)
-    Q_PROPERTY(QString user MEMBER currentUser NOTIFY popularTagsChanged)
+    Q_PROPERTY(QString user MEMBER currentUser NOTIFY userChanged)
 
 public:
 
@@ -82,6 +82,8 @@ protected:
     bool saveNote(Note* note);
     bool saveIndex();
 
+    void setCurrentUser(QString name, bool success);
+
     QList<Note*> noteList; // 保存现有所有的Note对象（不包含emptyNote），清空时需释放对象
 
     QSet<QString> genreSet;
@@ -102,6 +104,8 @@ protected:
     const int maxPopTag = 30;
 
     QString currentUser;
+
+    QSet<int> deletedNotes;
 
 };
 

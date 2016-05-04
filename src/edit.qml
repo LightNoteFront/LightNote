@@ -146,8 +146,11 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        editState = true;
-                        textContent.forceActiveFocus();
+                        if(currentNote.author.length === 0 || currentNote.author === notes.user)
+                        {
+                            editState = true;
+                            textContent.forceActiveFocus();
+                        }
                     }
                 }
 

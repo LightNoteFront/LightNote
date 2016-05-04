@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<Note>("LightNote.Note", 1, 0, "Note");
 
-    qDebug() << QGuiApplication::primaryScreen()->physicalDotsPerInch();
+    //qDebug() << QGuiApplication::primaryScreen()->physicalDotsPerInch();
 
     double screenScale = 1;
 #ifdef Q_OS_MAC

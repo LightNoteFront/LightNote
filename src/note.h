@@ -13,6 +13,7 @@ class Note : public QObject
     Q_PROPERTY(QString genre MEMBER genre NOTIFY infoChanged)
     Q_PROPERTY(QStringList tags MEMBER tags NOTIFY infoChanged)
     Q_PROPERTY(QString content MEMBER content NOTIFY infoChanged)
+    Q_PROPERTY(QString author MEMBER authorId NOTIFY infoChanged)
 
 public:
 
@@ -39,7 +40,8 @@ protected:
 
     int localId;
 
-    QString webId; // 网络索引id，用于标记笔记是否对应服务器上的笔记记录，新建时为空
+    int webId; // 网络索引id，用于标记笔记是否对应服务器上的笔记记录，新建时为-1
+    int webTime; // 网络传回的最近编辑时间，用于判断笔记上传还是下载，新建时为0
 
     QString title;
 

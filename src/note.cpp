@@ -7,6 +7,8 @@
 Note::Note(QObject *parent, int id)
     : QObject(parent)
     , localId(id)
+    , webId(-1)
+    , webTime(0)
 {
 
 }
@@ -15,6 +17,7 @@ Note::Note(const Note& other)
     : QObject(other.parent())
     , localId(other.localId)
     , webId(other.webId)
+    , webTime(other.webTime)
     , title(other.title)
     , genre(other.genre)
     , tags(other.tags)
@@ -26,7 +29,7 @@ Note::Note(const Note& other)
 
 void Note::read(const QJsonObject& json)
 {
-    webId = json.value("noteID").toString();
+    webId = json.value("noteID").toInt(-1);
     authorId = json.value("userID").toString();
 
     QByteArray raw = QByteArray::fromBase64(json.value("content").toString().toUtf8());
@@ -41,6 +44,7 @@ void Note::read(const QJsonObject& json)
             tags.append(tag);
     }
 
+    webTime = objContent.value("webTime").toInt(0);
     genre = objContent.value("genre").toString();
     title = objContent.value("title").toString();
     content = QString::fromUtf8(QByteArray::fromBase64(objContent.value("text").toString().toUtf8()));
@@ -49,14 +53,16 @@ void Note::read(const QJsonObject& json)
 
 void Note::write(QJsonObject& json) const
 {
-    if(!webId.isNull())
+    if(webId != -1)
         json.insert("noteID", webId);
     if(!authorId.isNull())
         json.insert("userID", authorId);
     QJsonArray arrtag = QJsonArray::fromStringList(tags);
     json.insert("tags", arrtag);
+    json.insert("genre", genre);
 
     QJsonObject objContent;
+    objContent.insert("webTime", webTime);
     objContent.insert("tags", arrtag);
     objContent.insert("genre", genre);
     objContent.insert("title", title);
@@ -69,6 +75,7 @@ void Note::write(QJsonObject& json) const
 Note& Note::operator=(const Note& other)
 {
     webId = other.webId;
+    webTime = other.webTime;
     title = other.title;
     genre = other.genre;
     tags = other.tags;
@@ -79,7 +86,7 @@ Note& Note::operator=(const Note& other)
 
 bool Note::operator==(const Note& other)
 {
-    if(webId.isNull() && other.webId.isNull())
+    if(webId == -1 && other.webId == -1)
         return localId == other.localId;
     return webId == other.webId;
 }

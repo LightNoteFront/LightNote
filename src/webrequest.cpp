@@ -1,6 +1,8 @@
 #include "webrequest.h"
 
 #include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QNetworkReply>
 
 WebRequest::WebRequest(QString webroot, QObject* parent)
@@ -42,15 +44,18 @@ bool WebRequest::send(QString url, const QJsonObject& data, CallbackReply callba
     QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    QJsonDocument doc;
-    doc.setObject(data);
+    QJsonDocument doc(data);
     QByteArray raw = doc.toJson();
 
     mtxCallback.lock();
     QNetworkReply* reply = manager->post(req, raw);
     if(reply != nullptr)
         mapCallback[reply] = callback;
+    else
+        qDebug() << "null reply !!";
     mtxCallback.unlock();
+
+    qDebug() << "sended" << raw;
 
     return reply != nullptr;
 }
@@ -79,7 +84,16 @@ void WebRequest::replyFinished(QNetworkReply* reply)
     {
         QByteArray raw = reply->readAll();
         QJsonDocument doc = QJsonDocument::fromJson(raw);
-        callback(doc.object());
+        if(doc.isArray())
+        {
+            QJsonObject obj;
+            obj["array"] = doc.array();
+            callback(obj);
+        }
+        else
+        {
+            callback(doc.object());
+        }
     }
     else
     {

@@ -532,15 +532,16 @@ Window {
                                     MouseArea {
                                         anchors.fill: parent
                                         onClicked: {
-                                            if (notes.user.length == 0)
+                                            userItemContainer.state = "login"
+                                            /*if (notes.user.length == 0)
                                             {
                                                 userItemContainer.state = "login"
                                             }
                                             else//注销
                                             {
                                                 userPhotoImage.source = "img/title/null.png"
-                                                userNoteNumberText.text = "笔记 0项"
-                                            }
+                                                //userNoteNumberText.text = "笔记 0项"
+                                            }*/
                                         }
                                     }
                                 }
@@ -610,7 +611,7 @@ Window {
                         spacing: dp(15)
                         anchors.leftMargin: dp(20)
 
-                        Image {
+                        /*Image {
                             id: footerSettingImage
                             width: dp(20)
                             height: dp(20)
@@ -623,7 +624,7 @@ Window {
                                     //subItem.loadUI("test.qml")//写崩了。。。
                                 }
                             }
-                        }
+                        }*/
 
                         Image {
                             id: footerUploadImage
@@ -631,7 +632,12 @@ Window {
                             height: dp(20)
                             anchors.verticalCenter: parent.verticalCenter
                             source: "img/menu/upload.png"
-
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    notes.sync();
+                                }
+                            }
                         }
                     }
                 }

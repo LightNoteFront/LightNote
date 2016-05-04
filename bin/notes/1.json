@@ -1,5 +1,10 @@
 {
-    "content": "ewogICAgImdlbnJlIjogIui9r+S7tumhueebrueuoeeQhiIsCiAgICAidGFncyI6IFsKICAgIF0sCiAgICAidGV4dCI6ICIiLAogICAgInRpdGxlIjogIuWGmeaWh+ahoyIKfQo=",
+    "content": "ewogICAgImdlbnJlIjogInRlc3QiLAogICAgInRhZ3MiOiBbCiAgICAgICAgInQxIiwKICAgICAgICAidDIiCiAgICBdLAogICAgInRleHQiOiAiNzcrOTc3KzlMZSsvdmUrL3ZXMD0iLAogICAgInRpdGxlIjogInRlc3QgdGl0bGUiLAogICAgIndlYlRpbWUiOiA3OTMzNgp9Cg==",
+    "genre": "test",
+    "noteID": 16,
     "tags": [
-    ]
+        "t1",
+        "t2"
+    ],
+    "userID": "123123"
 }
