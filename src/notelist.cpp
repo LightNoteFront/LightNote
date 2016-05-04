@@ -205,11 +205,13 @@ void NoteList::fullLoad()
         QByteArray raw = file.readAll();
         file.close();
 
-        QJsonArray arr = QJsonDocument::fromJson(raw).array();
+        QJsonObject obj = QJsonDocument::fromJson(raw).object();
+        QJsonArray arrIdx = obj["index"].toArray();
+        QJsonArray arrGenre = obj["genre"].toArray();
 
-        for(int i=0; i<arr.size(); ++i)
+        for(int i=0; i<arrIdx.size(); ++i)
         {
-            int id = arr.at(i).toInt(-1);
+            int id = arrIdx.at(i).toInt(-1);
             if(id == -1)continue;
             QFile filenote(QString("notes/%0.json").arg(id));
             if(filenote.open(QFile::ReadOnly))
@@ -219,6 +221,13 @@ void NoteList::fullLoad()
                 createNote(QJsonDocument::fromJson(raw).object(), id);
             }
         }
+
+        for(int i=0; i<arrGenre.size(); ++i)
+        {
+            genreSet.insert(arrIdx.at(i).toString());
+        }
+
+        genreSet.remove(QString());
 
     }
 
@@ -235,15 +244,22 @@ void NoteList::fullSave()
     QFile file("notelist.json");
     if(file.open(QFile::WriteOnly))
     {
-        QJsonArray arr;
+        QJsonObject obj;
+        QJsonArray arrIdx, arrGenre;
 
         for(int i=0; i<noteList.size(); ++i)
         {
             if(saveNote(noteList[i]))
-                arr.append(noteList[i]->localId);
+                arrIdx.append(noteList[i]->localId);
         }
 
-        QJsonDocument doc(arr);
+        for(auto genre : genreSet)
+            arrGenre.append(genre);
+
+        obj.insert("index", arrIdx);
+        obj.insert("genre", arrGenre);
+
+        QJsonDocument doc(obj);
         file.write(doc.toJson());
         file.close();
 
@@ -338,10 +354,15 @@ bool NoteList::saveIndex()
     QFile file("notelist.json");
     if(file.open(QFile::WriteOnly))
     {
-        QJsonArray arr;
+        QJsonObject obj;
+        QJsonArray arrIdx, arrGenre;
         for(int i=0; i<noteList.size(); ++i)
-            arr.append(noteList[i]->localId);
-        QJsonDocument doc(arr);
+            arrIdx.append(noteList[i]->localId);
+        for(auto genre : genreSet)
+            arrGenre.append(genre);
+        obj.insert("index", arrIdx);
+        obj.insert("genre", arrGenre);
+        QJsonDocument doc(obj);
         file.write(doc.toJson());
         file.close();
         return true;
