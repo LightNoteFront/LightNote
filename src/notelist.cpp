@@ -4,6 +4,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QDir>
+#include <QSettings>
 
 NoteList::NoteList(WebRequest* request, QObject *parent)
     : QObject(parent)
@@ -13,11 +14,23 @@ NoteList::NoteList(WebRequest* request, QObject *parent)
     , req(request)
 {
     fullLoad();
+
     colorList << "aqua" << "blueviolet" << "chocolate" << "crimson" << "darkblue" << "dodgerblue"
               << "forestgreen" << "firebrick" << "gold" << "hotpink" << "lightseagreen" << "lime"
               << "limegreen" << "lightsalmon" << "mediumspringgreen" << "mediumpurple" << "navy"
               << "olive" << "orange" << "orangered" << "peru" << "plum" << "purple" << "red"
               << "salmon" << "seagreen" << "steelblue" << "tomato" << "violet";
+
+    if(req != nullptr)
+    {
+        req->registerUrl("login", "Login");
+        req->registerUrl("register", "NewUser");
+        req->registerUrl("download", "Sync_Download");
+        req->registerUrl("upload", "Sync_Upload");
+    }
+
+    currentUser = QSettings().property("user").toString();
+
 }
 
 NoteList::~NoteList()
@@ -90,6 +103,11 @@ QList<QObject*> NoteList::getNotes() const
         if(filter.isEmpty() || note->title.contains(filter, Qt::CaseInsensitive))
             res.append(note);
     return res;
+}
+
+int NoteList::noteCount() const
+{
+    return noteList.count();
 }
 
 Note* NoteList::createNote(QString genre, QString title, int id)
@@ -298,6 +316,43 @@ void NoteList::addPopularTag(QString tag, int weight)
 QString NoteList::getColor(int index) const
 {
     return colorList[index%colorList.size()];
+}
+
+void NoteList::loginUser(QString username, QString password)
+{
+    QJsonObject obj;
+    obj["userID"] = username;
+    obj["userPassword"] = password;
+    req->get("login", obj, [this, &username](const QJsonObject& reply)
+    {
+        bool result = reply["result"].toBool();
+        if(result)
+        {
+            currentUser = username;
+            QSettings().setProperty("user", currentUser);
+            emit userChanged();
+        }
+        emit loginFinished(result);
+    });
+}
+
+void NoteList::registerUser(QString username, QString password, QString phoneno)
+{
+    QJsonObject obj;
+    obj["userID"] = username;
+    obj["userPassword"] = password;
+    obj["userPhoneNumber"] = phoneno;
+    req->get("register", obj, [this, &username](const QJsonObject& reply)
+    {
+        bool result = reply["result"].toBool();
+        if(result)
+        {
+            currentUser = username;
+            QSettings().setProperty("user", currentUser);
+            emit userChanged();
+        }
+        emit loginFinished(result);
+    });
 }
 
 void NoteList::setNotesChanged()

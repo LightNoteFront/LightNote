@@ -524,19 +524,18 @@ Window {
 
                                 Text {
                                     id: userNameInformationText
-                                    text: "未登陆"
+                                    text: notes.user.length == 0 ? "未登陆" : notes.user
                                     color: "#ffffff"
                                     font.pixelSize: dp(24)
                                     MouseArea {
                                         anchors.fill: parent
                                         onClicked: {
-                                            if (userNameInformationText.text == "未登陆")
+                                            if (notes.user.length == 0)
                                             {
                                                 userItemContainer.state = "login"
                                             }
                                             else//注销
                                             {
-                                                userNameInformationText.text = "未登陆"
                                                 userPhotoImage.source = "img/title/null.png"
                                                 userNoteNumberText.text = "笔记 0项"
                                             }
@@ -545,7 +544,7 @@ Window {
                                 }
                                 Text {
                                     id: userNoteNumberText
-                                    text: "笔记 0项"//用户笔记数量
+                                    text: "笔记"+notes.noteCount+"项"//用户笔记数量
                                     color: "#747474"
 
                                 }
@@ -649,18 +648,21 @@ Window {
                     PropertyChanges { target: userStatement; opacity: 1; enabled: true }
                     PropertyChanges { target: userRegister; opacity: 0; enabled: false }
                     PropertyChanges { target: userCancelItem; opacity: 0.5; enabled: true }
+                    PropertyChanges { target: userItemMask; enabled: true }
                 },
                 State {
                     name: "closed"
                     PropertyChanges { target: userStatement; opacity: 0; enabled: false }
                     PropertyChanges { target: userRegister; opacity: 0; enabled: false }
                     PropertyChanges { target: userCancelItem; opacity: 0; enabled: false }
+                    PropertyChanges { target: userItemMask; enabled: false }
                 },
                 State {
                     name: "register"
                     PropertyChanges { target: userStatement; opacity: 0; enabled: false }
                     PropertyChanges { target: userRegister; opacity: 1; enabled: true }
                     PropertyChanges { target: userCancelItem; opacity: 0.5; enabled: true }
+                    PropertyChanges { target: userItemMask; enabled: true }
                 }
             ]
 
@@ -744,12 +746,38 @@ Window {
             }
 
             Item {
+                id: userItemMask
+
+                width: dp(200)
+                height: dp(300)
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+
+                MouseArea {
+                    anchors.fill: parent
+                }
+
+            }
+
+            Item {
                 id: userStatement
 
                 width: dp(200)
                 height: dp(300)
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
+
+                Connections {
+                    target: notes
+                    onLoginFinished: {
+                        if(userItemContainer.state == "login")
+                        {
+                            noticeItem.notify(success ? "登录成功" : "登录失败，请检查后再试");
+                            userStatement.enabled = true;
+                            if(success)userItemContainer.state = "closed"
+                        }
+                    }
+                }
 
                 Rectangle {
                     anchors.fill: parent
@@ -844,8 +872,11 @@ Window {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    //登陆行为
-                                    userItemContainer.state = "closed"
+                                    if(userName.text.length > 0)
+                                    {
+                                        userStatement.enabled = false;
+                                        notes.loginUser(userName.text, userPasswd.text);
+                                    }
                                 }
                             }
                         }
@@ -883,6 +914,18 @@ Window {
                 height: dp(400)
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
+
+                Connections {
+                    target: notes
+                    onLoginFinished: {
+                        if(userItemContainer.state == "register")
+                        {
+                            noticeItem.notify(success ? "注册成功" : "注册失败，请更换用户名再试");
+                            userRegister.enabled = true;
+                            if(success)userItemContainer.state = "closed"
+                        }
+                    }
+                }
 
                 Rectangle {
                     anchors.fill: parent
@@ -1024,10 +1067,13 @@ Window {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    if (registerUserPasswd.text == registerUserPasswdTwo.text && registerUserName.text != "未登陆")
+                                    if (registerUserPasswd.text == registerUserPasswdTwo.text  &&
+                                            registerUserPasswd.text.length > 0 && registerUserName.text.length > 0)
                                     {
                                         //注册行为
-                                        userItemContainer.state = "login"
+                                        // userItemContainer.state = "login"
+                                        userRegister.enabled = false;
+                                        notes.registerUser(registerUserName.text, registerUserPasswd.text, registerUserPhoneNumber.text);
                                     }
                                     else
                                     {

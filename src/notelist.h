@@ -11,9 +11,11 @@ class NoteList : public QObject
 
     Q_PROPERTY(QStringList genreList READ getGenreList NOTIFY notesChanged)
     Q_PROPERTY(QList<QObject*> noteList READ getNotes NOTIFY notesChanged)
+    Q_PROPERTY(int noteCount READ noteCount NOTIFY notesChanged)
     Q_PROPERTY(Note* currentNote READ getCurrentNote WRITE setCurrentNote NOTIFY currentNoteChanged)
     Q_PROPERTY(QString filter MEMBER filter NOTIFY filterChanged)
     Q_PROPERTY(QStringList popularTags READ getPopularTags NOTIFY popularTagsChanged)
+    Q_PROPERTY(QString user MEMBER currentUser NOTIFY popularTagsChanged)
 
 public:
 
@@ -30,6 +32,8 @@ public:
     Q_INVOKABLE QList<QObject*> getGenreNotesFiltered(QString genreName) const;
     Q_INVOKABLE QList<QObject*> getGenreNotes(QString genreName) const;
     Q_INVOKABLE QList<QObject*> getNotes() const;
+
+    Q_INVOKABLE int noteCount() const;
 
     Q_INVOKABLE Note* createNote(QString genre = QString(), QString title = QString(), int id=-1);
     Q_INVOKABLE Note* createNote(const QJsonObject &json, int id=-1);
@@ -52,6 +56,9 @@ public:
 
     Q_INVOKABLE QString getColor(int index) const;
 
+    Q_INVOKABLE void loginUser(QString username, QString password);
+    Q_INVOKABLE void registerUser(QString username, QString password, QString phoneno);
+
 signals:
 
     void notesChanged();
@@ -60,6 +67,9 @@ signals:
     void filterChanged();
 
     void popularTagsChanged();
+
+    void loginFinished(bool success);
+    void userChanged();
 
 protected slots:
 
@@ -90,6 +100,8 @@ protected:
     QMap<QString, int> popTags;
     QMap<QPair<int, QString>, QString> tagPop;
     const int maxPopTag = 30;
+
+    QString currentUser;
 
 };
 

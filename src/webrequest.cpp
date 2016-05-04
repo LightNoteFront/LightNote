@@ -81,6 +81,10 @@ void WebRequest::replyFinished(QNetworkReply* reply)
         QJsonDocument doc = QJsonDocument::fromJson(raw);
         callback(doc.object());
     }
+    else
+    {
+        callback(QJsonObject());
+    }
 
     reply->deleteLater();
 }
