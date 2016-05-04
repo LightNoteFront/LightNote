@@ -1148,6 +1148,101 @@ Window {
 
     }
 
+//    Item {
+//        id: addGenre
+
+//        property string addingGenre: ""
+
+//        function question(note)
+//        {
+//            addingGenre = note
+//            questionText.text = ""
+//            addGenre.state = "question"
+//        }
+//        anchors.fill: parent
+
+//        state: "closed"
+//        states: [
+//            State {
+//                name: "question"
+//                PropertyChanges { target: addGenre; opacity: 1; enabled: true }
+//            },
+//            State {
+//                name: "closed"
+//                PropertyChanges { target: addGenre; opacity: 0; enabled: false }
+//            }
+//        ]
+
+//        transitions: [
+//            Transition {
+//                to: "*"
+//                PropertyAnimation {
+//                    target: addGenre
+//                    duration: 100; properties: "opacity"; easing.type: Easing.Linear
+//                }
+//            }
+//        ]
+
+//        Rectangle {
+//            color: "#262626"
+//            anchors.fill: parent
+//            opacity: 0.5
+//        }
+
+//        Rectangle {
+//            id: addingGenreRectangle
+//            color: "#262626"
+//            radius: 8
+//            anchors.horizontalCenter: parent.horizontalCenter
+//            anchors.verticalCenter: parent.verticalCenter
+//            opacity: 0.8
+//            width: 200
+//            height: 100
+
+//            Text {
+//                id: addingGenreText
+//                color: "#ffffff"
+//                anchors.verticalCenterOffset: -14
+//                anchors.horizontalCenter: parent.horizontalCenter
+//                anchors.verticalCenter: parent.verticalCenter
+//            }
+//        }
+//        Rectangle {
+//            anchors.left: questionRectangle.left
+//            anchors.right: questionRectangle.right
+//            anchors.bottom: questionRectangle.bottom
+//            anchors.bottomMargin: 5
+//            height: questionRectangle.height / 4
+//            color: "red"
+//            Rectangle {
+//                anchors.left: parent.left
+//                anchors.right: parent.right
+//                anchors.bottom: parent.bottom
+//                anchors.bottomMargin: -5
+//                anchors.top: parent.top
+//                radius: 5
+//                color: "red"
+
+//                Text {
+//                    color: "#ffffff"
+//                    font.pixelSize: 14
+//                    text: "删除"
+//                    anchors.horizontalCenter: parent.horizontalCenter
+//                    anchors.verticalCenter: parent.verticalCenter
+//                }
+//            }
+//        }
+
+//        MouseArea {
+//            anchors.fill: parent
+//            onClicked: {
+//                notes.deleteNote(addGenre.deletingNote)
+//                addGenre.deletingNote = null
+//                addGenre.state = "closed"
+//            }
+//        }
+//    }
+
     Item {
         id: questionItem
 
@@ -1157,7 +1252,7 @@ Window {
         {
             deletingNote = note
             questionText.text = "删除“" + note.title + "”？"
-            questionItem.state = "notify"
+            questionItem.state = "question"
         }
         anchors.fill: parent
 
@@ -1183,6 +1278,13 @@ Window {
             }
         ]
 
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                questionItem.state = "closed"
+            }
+        }
+
         Rectangle {
             color: "#262626"
             anchors.fill: parent
@@ -1206,6 +1308,13 @@ Window {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+
+                }
+            }
         }
         Rectangle {
             anchors.left: questionRectangle.left
@@ -1214,8 +1323,8 @@ Window {
             anchors.bottomMargin: 5
             height: questionRectangle.height / 4
             color: "red"
+
             Rectangle {
-                id: rectangle2
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
@@ -1231,17 +1340,19 @@ Window {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                 }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        notes.deleteNote(questionItem.deletingNote)
+                        questionItem.deletingNote = null
+                        questionItem.state = "closed"
+                    }
+                }
             }
         }
 
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                notes.deleteNote(questionItem.deletingNote)
-                questionItem.deletingNote = null
-                questionItem.state = "closed"
-            }
-        }
+
     }
 
     Item {
