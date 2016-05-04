@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 
     double screenScale = 1;
 #ifdef Q_OS_MAC
-    screenScale = 1.2;
+    screenScale = 0.8;
 #endif
 #ifdef Q_OS_WIN32
     screenScale = 1.2;

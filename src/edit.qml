@@ -555,7 +555,7 @@ Rectangle {
                             onClicked: {
                                 if(modelData === 1)
                                 {
-                                    // 新建
+                                    addGenre.add()
                                 }
                                 else
                                 {
@@ -574,7 +574,238 @@ Rectangle {
         }
 
     }
+    Item {
+        id: addGenre
 
+        function add()
+        {
+            addGenre.state = "adding"
+        }
+        anchors.fill: parent
 
+        state: "closed"
+        states: [
+            State {
+                name: "adding"
+                PropertyChanges { target: addGenre; opacity: 1; enabled: true }
+            },
+            State {
+                name: "closed"
+                PropertyChanges { target: addGenre; opacity: 0; enabled: false }
+            }
+        ]
+
+        transitions: [
+            Transition {
+                to: "*"
+                PropertyAnimation {
+                    target: addGenre
+                    duration: 100; properties: "opacity"; easing.type: Easing.Linear
+                }
+            }
+        ]
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                addGenre.state = "closed"
+            }
+        }
+
+        Rectangle {
+            color: "#262626"
+            anchors.fill: parent
+            opacity: 0.5
+        }
+
+        Rectangle {
+            id: addingGenreRectangle
+            color: "#ffffff"
+            radius: dp(8)
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            opacity: 0.8
+            width: dp(200)
+            height: dp(100)
+
+            TextInput {
+                id: addingGenreText
+                color: "#979797"
+                selectionColor: "#555555"
+                anchors.verticalCenterOffset: -14
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    addingGenreText.focus = true
+                }
+            }
+        }
+        Rectangle {
+            anchors.left: addingGenreRectangle.left
+            anchors.right: addingGenreRectangle.right
+            anchors.bottom: addingGenreRectangle.bottom
+            anchors.bottomMargin: dp(5)
+            height: addingGenreRectangle.height / 4
+            color: "#1685f8"
+
+            Rectangle {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: dp(-5)
+                anchors.top: parent.top
+                radius: dp(5)
+                color: "#1685f8"
+
+                Text {
+                    color: "#ffffff"
+                    font.pixelSize: dp(14)
+                    text: "添加"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    if (addingGenreText.text != "")
+                    {
+                        notes.addGenre(addingGenreText.text)
+                        addingGenreText.text = ""
+                        addingGenreText.focus = false
+                        addGenre.state = "closed"
+                    }
+                    else
+                    {
+                        addingGenreText.text = ""
+                        addingGenreText.focus = true
+                        noticeItem.notify("分类名不能为空！")
+                    }
+                }
+            }
+        }
+    }
+
+    Item {
+        id: addTag
+
+        function add()
+        {
+            addTag.state = "adding"
+        }
+        anchors.fill: parent
+
+        state: "closed"
+        states: [
+            State {
+                name: "adding"
+                PropertyChanges { target: addTag; opacity: 1; enabled: true }
+            },
+            State {
+                name: "closed"
+                PropertyChanges { target: addTag; opacity: 0; enabled: false }
+            }
+        ]
+
+        transitions: [
+            Transition {
+                to: "*"
+                PropertyAnimation {
+                    target: addTag
+                    duration: 100; properties: "opacity"; easing.type: Easing.Linear
+                }
+            }
+        ]
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                addTag.state = "closed"
+            }
+        }
+
+        Rectangle {
+            color: "#262626"
+            anchors.fill: parent
+            opacity: 0.5
+        }
+
+        Rectangle {
+            id: addingTagRectangle
+            color: "#ffffff"
+            radius: dp(8)
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            opacity: 0.8
+            width: dp(200)
+            height: dp(100)
+
+            TextInput {
+                id: addingTagText
+                color: "#979797"
+                selectionColor: "#555555"
+                anchors.verticalCenterOffset: -14
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    addingTagText.focus = true
+                }
+            }
+        }
+        Rectangle {
+            anchors.left: addingTagRectangle.left
+            anchors.right: addingTagRectangle.right
+            anchors.bottom: addingTagRectangle.bottom
+            anchors.bottomMargin: dp(5)
+            height: addingTagRectangle.height / 4
+            color: "#1685f8"
+
+            Rectangle {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: dp(-5)
+                anchors.top: parent.top
+                radius: dp(5)
+                color: "#1685f8"
+
+                Text {
+                    color: "#ffffff"
+                    font.pixelSize: dp(14)
+                    text: "添加"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    if (addingTagText.text != "")
+                    {
+                        //notes.addTag(addingTagText.text) //interface
+                        addingTagText.text = ""
+                        addingTagText.focus = false
+                        addTag.state = "closed"
+                    }
+                    else
+                    {
+                        addingTagText.text = ""
+                        addingTagText.focus = true
+                        noticeItem.notify("分类名不能为空！")
+                    }
+                }
+            }
+        }
+    }
 }
 
