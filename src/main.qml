@@ -124,6 +124,14 @@ Window {
                             height: dp(55)
                             anchors.left: parent.left
                             anchors.right: parent.right
+
+                            onPressAndHold: {
+                                if (modelData != 1)
+                                {
+                                    classDeleteItem.classDelete(modelData)
+                                }
+                            }
+
                             onClicked: {
                                 if(modelData == 1)
                                 {
@@ -1112,7 +1120,6 @@ Window {
                 }
             }
         }
-
     }
 
     Item {
@@ -1323,27 +1330,27 @@ Window {
     }
 
     Item {
-        id: questionItem
+        id: noteDeleteItem
 
         property Note deletingNote: null
 
-        function question(note)
+        function noteDelete(note)
         {
             deletingNote = note
-            questionText.text = "删除“" + note.title + "”？"
-            questionItem.state = "question"
+            noteDeleteText.text = "删除“" + note.title + "”？"
+            noteDeleteItem.state = "noteDelete"
         }
         anchors.fill: parent
 
         state: "closed"
         states: [
             State {
-                name: "question"
-                PropertyChanges { target: questionItem; opacity: 1; enabled: true }
+                name: "noteDelete"
+                PropertyChanges { target: noteDeleteItem; opacity: 1; enabled: true }
             },
             State {
                 name: "closed"
-                PropertyChanges { target: questionItem; opacity: 0; enabled: false }
+                PropertyChanges { target: noteDeleteItem; opacity: 0; enabled: false }
             }
         ]
 
@@ -1351,7 +1358,7 @@ Window {
             Transition {
                 to: "*"
                 PropertyAnimation {
-                    target: questionItem
+                    target: noteDeleteItem
                     duration: 100; properties: "opacity"; easing.type: Easing.Linear
                 }
             }
@@ -1360,7 +1367,7 @@ Window {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                questionItem.state = "closed"
+                noteDeleteItem.state = "closed"
             }
         }
 
@@ -1371,7 +1378,7 @@ Window {
         }
 
         Rectangle {
-            id: questionRectangle
+            id: noteDeleteRectangle
             color: "#262626"
             radius: 8
             anchors.horizontalCenter: parent.horizontalCenter
@@ -1381,7 +1388,7 @@ Window {
             height: dp(100)
 
             Text {
-                id: questionText
+                id: noteDeleteText
                 color: "#ffffff"
                 anchors.verticalCenterOffset: -14
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -1396,11 +1403,11 @@ Window {
             }
         }
         Rectangle {
-            anchors.left: questionRectangle.left
-            anchors.right: questionRectangle.right
-            anchors.bottom: questionRectangle.bottom
+            anchors.left: noteDeleteRectangle.left
+            anchors.right: noteDeleteRectangle.right
+            anchors.bottom: noteDeleteRectangle.bottom
             anchors.bottomMargin: dp(5)
-            height: questionRectangle.height / 4
+            height: noteDeleteRectangle.height / 4
             color: "red"
 
             Rectangle {
@@ -1423,9 +1430,120 @@ Window {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        notes.deleteNote(questionItem.deletingNote)
-                        questionItem.deletingNote = null
-                        questionItem.state = "closed"
+                        notes.deleteNote(noteDeleteItem.deletingNote)
+                        noteDeleteItem.deletingNote = null
+                        noteDeleteItem.state = "closed"
+                    }
+                }
+            }
+        }
+    }
+
+    Item {
+        id: classDeleteItem
+
+        property string deletingNoteList: ""
+
+        function classDelete(noteList)
+        {
+            deletingNoteList = noteList
+            classDeleteText.text = "删除“" + noteList + "”？"
+            classDeleteItem.state = "classDelete"
+        }
+        anchors.fill: parent
+
+        state: "closed"
+        states: [
+            State {
+                name: "classDelete"
+                PropertyChanges { target: classDeleteItem; opacity: 1; enabled: true }
+            },
+            State {
+                name: "closed"
+                PropertyChanges { target: classDeleteItem; opacity: 0; enabled: false }
+            }
+        ]
+
+        transitions: [
+            Transition {
+                to: "*"
+                PropertyAnimation {
+                    target: classDeleteItem
+                    duration: 100; properties: "opacity"; easing.type: Easing.Linear
+                }
+            }
+        ]
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                classDeleteItem.state = "closed"
+            }
+        }
+
+        Rectangle {
+            color: "#262626"
+            anchors.fill: parent
+            opacity: 0.5
+        }
+
+        Rectangle {
+            id: classDeleteRectangle
+            color: "#262626"
+            radius: 8
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            opacity: 0.8
+            width: dp(200)
+            height: dp(100)
+
+            Text {
+                id: classDeleteText
+                color: "#ffffff"
+                anchors.verticalCenterOffset: -14
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+
+                }
+            }
+        }
+        Rectangle {
+            anchors.left: classDeleteRectangle.left
+            anchors.right: classDeleteRectangle.right
+            anchors.bottom: classDeleteRectangle.bottom
+            anchors.bottomMargin: dp(5)
+            height: classDeleteRectangle.height / 4
+            color: "red"
+
+            Rectangle {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: dp(-5)
+                anchors.top: parent.top
+                radius: dp(5)
+                color: "red"
+
+                Text {
+                    color: "#ffffff"
+                    font.pixelSize: dp(14)
+                    text: "删除"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        notes.deleteGenre(classDeleteItem.deletingNoteList)
+
+                        classDeleteItem.state = "closed"
+                        classDeleteItem.deletingNoteList = ""
                     }
                 }
             }
