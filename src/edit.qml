@@ -142,6 +142,7 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.rightMargin: dp(10)
                 source: "img/edit/edit.png"
+                opacity: currentNote && (currentNote.author.length === 0 || currentNote.author === notes.user) ? 1 : 0.3
 
                 MouseArea {
                     anchors.fill: parent
@@ -530,7 +531,7 @@ Rectangle {
                     spacing: 1
                     clip: true
 
-                    model: [1].concat(notes.getGenreList())
+                    model: [1].concat(notes.genreList)
 
                     delegate: Rectangle {
 

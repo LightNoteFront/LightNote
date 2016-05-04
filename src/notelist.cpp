@@ -147,25 +147,6 @@ void NoteList::sync()
 
         }
 
-        while(!timeMap.empty())
-        {
-            int webId = timeMap.firstKey();
-            QJsonObject objID;
-            objID["noteID"] = webId;
-            qDebug() << "new downloading " << webId;
-            req->get("download", objID, [this, &wait, &timeMap, webId](const QJsonObject& data)
-            {
-                qDebug() << "new downloaded " << data;
-                Note* note = createNote(data);
-                note->webTime = timeMap[webId];
-                saveNote(note);
-                QTimer::singleShot(0, &wait, SLOT(quit()));
-            });
-            wait.exec();
-            timeMap.remove(webId);
-            qDebug() << "new download done";
-        }
-
         QList<int> deleted;
         for(int webId : deletedNotes)
         {
@@ -184,6 +165,26 @@ void NoteList::sync()
         for(int webId : deleted)
         {
             deletedNotes.remove(webId);
+            timeMap.remove(webId);
+        }
+
+        while(!timeMap.empty())
+        {
+            int webId = timeMap.firstKey();
+            QJsonObject objID;
+            objID["noteID"] = webId;
+            qDebug() << "new downloading " << webId;
+            req->get("download", objID, [this, &wait, &timeMap, webId](const QJsonObject& data)
+            {
+                qDebug() << "new downloaded " << data;
+                Note* note = createNote(data);
+                note->webTime = timeMap[webId];
+                saveNote(note);
+                QTimer::singleShot(0, &wait, SLOT(quit()));
+            });
+            wait.exec();
+            timeMap.remove(webId);
+            qDebug() << "new download done";
         }
 
         qDebug() << "Done.";
@@ -321,6 +322,7 @@ void NoteList::applyNote()
     currentNote->validate();
     saveNote(currentNote);
     genreSet.insert(currentNote->genre);
+    saveIndex();
     setNotesChanged();
 }
 
@@ -330,6 +332,7 @@ void NoteList::applyNote(Note* note)
         return;
     note->validate();
     genreSet.insert(note->genre);
+    saveIndex();
     setNotesChanged();
 }
 
@@ -410,6 +413,7 @@ void NoteList::fullLoad()
 
     }
 
+    saveIndex();
     setSignalEnabled(true);
     setNotesChanged();
 
