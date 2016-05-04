@@ -295,6 +295,7 @@ Window {
                 source: "img/title/menu.png"
                 MouseArea {
                     anchors.fill: parent
+                    anchors.margins: -10
                     onClicked: {
                         menuContainer.state = "opened"
                     }
@@ -378,6 +379,7 @@ Window {
 
                 MouseArea {
                     anchors.fill: parent
+                    anchors.margins: -10
                     onClicked: {
                         notes.currentNote = null
                         subItem.loadUI("edit.qml")
