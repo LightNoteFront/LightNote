@@ -55,6 +55,9 @@ public:
     Q_INVOKABLE QStringList getPopularTags(int limit = 10) const;
     Q_INVOKABLE void addPopularTag(QString tag, int weight = 1);
 
+    Q_INVOKABLE void toggleTag(QString tag, bool on);
+    Q_INVOKABLE void resetToggleTag();
+
     Q_INVOKABLE QString getColor(int index) const;
 
     Q_INVOKABLE void loginUser(QString username, QString password);
@@ -90,6 +93,7 @@ protected:
     QSet<QString> genreSet;
 
     QString filter;
+    QSet<QString> selectedTags;
 
     Note* currentNote; // 指向现在的Note对象，不对对象的释放负责
     Note* emptyNote; // 保存一个Note对象，或者为空。清空时要delete或者转移对象。

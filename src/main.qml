@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Window 2.2
+import QtQuick.Layouts 1.1
 import LightNote.Note 1.0
 
 Window {
@@ -562,7 +563,8 @@ Window {
                             }
                         }
 
-                        Column {
+                        ColumnLayout {
+
                             id: innerMenuColumn
                             height: dp(45)
                             spacing: dp(10)
@@ -581,6 +583,73 @@ Window {
                                 id: innerSelectInformationText
                                 color: "#747474"
                                 text: qsTr("按标签筛选")
+                            }
+
+                            Flickable {
+
+                                id: tagListView
+                                width: parent.width
+                                Layout.fillHeight: true
+
+                                contentWidth: parent.width
+                                contentHeight: flowTag.childrenRect.height
+
+                                Flow {
+                                    id: flowTag
+                                    width: parent.width
+
+                                    Repeater {
+
+                                        id: repeaterTag
+
+                                        model: notes.popularTags
+
+                                        onModelChanged: {
+                                            notes.resetToggleTag();
+                                        }
+
+                                        delegate: Rectangle {
+
+                                            id: rectTag
+                                            width: Math.max(textTag.width, dp(10))+dp(10)
+                                            height: dp(20)
+                                            color: notes.getColor(modelData.charCodeAt(Math.max(modelData.length-2, 0)))
+                                            radius: dp(10)
+                                            opacity: toggled ? 1.0 : 0.3
+
+                                            property bool toggled: false
+
+                                            Connections {
+                                                target: repeaterTag
+                                                onModelChanged: {
+                                                    toggled = false;
+                                                }
+                                            }
+
+                                            Text {
+                                                id: textTag
+                                                color: "white"
+                                                font.pixelSize: dp(12)
+                                                font.wordSpacing : dp(1.5)
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                text: modelData
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                            }
+
+                                            MouseArea {
+                                                anchors.fill: parent
+                                                onClicked: {
+                                                    rectTag.toggled = !rectTag.toggled;
+                                                    notes.toggleTag(modelData, rectTag.toggled);
+                                                }
+                                            }
+
+                                        }
+
+
+                                    }
+                                }
+
                             }
 
                         }

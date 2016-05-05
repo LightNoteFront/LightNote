@@ -231,8 +231,26 @@ QList<QObject*> NoteList::getGenreNotesFiltered(QString genreName) const
 {
     QList<QObject*> res;
     for(auto note : noteList)
+    {
         if(note->genre == genreName && (filter.isEmpty() || note->title.contains(filter, Qt::CaseInsensitive)))
-            res.append(note);
+        {
+            if(!selectedTags.empty())
+            {
+                for(auto tag : note->tags)
+                {
+                    if(selectedTags.contains(tag))
+                    {
+                        res.append(note);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                res.append(note);
+            }
+        }
+    }
     return res;
 }
 
@@ -482,6 +500,19 @@ void NoteList::addPopularTag(QString tag, int weight)
         popTags.remove(firstKey.second);
     }
     emit popularTagsChanged();
+}
+
+void NoteList::toggleTag(QString tag, bool on)
+{
+    if(on)selectedTags.insert(tag);
+    else selectedTags.remove(tag);
+    setNotesChanged();
+}
+
+void NoteList::resetToggleTag()
+{
+    selectedTags.clear();
+    setNotesChanged();
 }
 
 QString NoteList::getColor(int index) const
