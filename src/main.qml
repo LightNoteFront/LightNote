@@ -598,6 +598,9 @@ Window {
                                     id: flowTag
                                     width: parent.width
 
+                                    spacing: 5
+                                    clip: true
+
                                     Repeater {
 
                                         id: repeaterTag
@@ -611,10 +614,10 @@ Window {
                                         delegate: Rectangle {
 
                                             id: rectTag
-                                            width: Math.max(textTag.width, dp(10))+dp(10)
-                                            height: dp(20)
+                                            width: Math.max(textTag.width, dp(12))+dp(12)
+                                            height: dp(24)
                                             color: notes.getColor(modelData.charCodeAt(Math.max(modelData.length-2, 0)))
-                                            radius: dp(10)
+                                            radius: dp(12)
                                             opacity: toggled ? 1.0 : 0.3
 
                                             property bool toggled: false
@@ -629,7 +632,7 @@ Window {
                                             Text {
                                                 id: textTag
                                                 color: "white"
-                                                font.pixelSize: dp(12)
+                                                font.pixelSize: dp(16)
                                                 font.wordSpacing : dp(1.5)
                                                 anchors.verticalCenter: parent.verticalCenter
                                                 text: modelData
@@ -1730,6 +1733,7 @@ Window {
     }
 
     Item {
+
         id: progressBarItem
 
         property int now: 0
@@ -1739,6 +1743,7 @@ Window {
         {
 
         }
+
         anchors.fill: parent
 
         state: "closed"
