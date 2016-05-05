@@ -80,7 +80,7 @@ Window {
                 delegate: Item {
                     width: itemCardList.width
                     height: itemCardList.height * 1.01 +
-                            (cardList.selectedGenre==modelData ?
+                            (cardList.selectedGenre===modelData ?
                                  (itemCardList.height - 20) * cardList.foldAnim : 0)
 
                     Rectangle {
@@ -95,7 +95,7 @@ Window {
                         Text {
                             x: parent.width * 0.5 * 0.3
                             y: dp(10)
-                            text: modelData == 1 ? "新建分类" : modelData
+                            text: modelData === 1 ? "新建分类" : modelData
                             font.bold : true
                             font.wordSpacing : 1.5
                             color: modelData === 1 ? "#909090" : notes.getColor(modelData.charCodeAt(Math.max(modelData.length-2, 0)))
@@ -133,7 +133,7 @@ Window {
                             }
 
                             onClicked: {
-                                if(modelData == 1)
+                                if(modelData === 1)
                                 {
                                     addGenre.add()
                                 }
@@ -159,7 +159,7 @@ Window {
                             id: noteListView
 
                             clip: true
-                            visible: modelData == cardList.selectedGenre
+                            visible: modelData === cardList.selectedGenre
                             interactive: cardList.state == "opened"
                             opacity: cardList.foldAnim
 
@@ -1656,6 +1656,97 @@ Window {
             anchors.fill: parent
             onClicked: {
                 noticeItem.state = "closed"
+            }
+        }
+    }
+
+    Item {
+        id: progressBarItem
+
+        property int now: 0
+        property int total: 100
+
+        function work()
+        {
+
+        }
+        anchors.fill: parent
+
+        state: "closed"
+        states: [
+            State {
+                name: "work"
+                PropertyChanges { target: progressBarItem; opacity: 1; enabled: true }
+            },
+            State {
+                name: "closed"
+                PropertyChanges { target: progressBarItem; opacity: 0; enabled: false }
+            }
+        ]
+
+        transitions: [
+            Transition {
+                to: "*"
+                PropertyAnimation {
+                    target: progressBarItem
+                    duration: 100; properties: "opacity"; easing.type: Easing.Linear
+                }
+            }
+        ]
+
+        Rectangle {
+            color: "#262626"
+            anchors.fill: parent
+            opacity: 0.5
+        }
+
+        Rectangle {
+            color: "#262626"
+            radius: dp(8)
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            opacity: 0.8
+            width: dp(200)
+            height: dp(100)
+
+            Text {
+                id: processText
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -20
+
+                text: "同步进度"
+                font.pixelSize: dp(15)
+                color: "#ffffff"
+            }
+
+            Item {
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: 20
+                width: 200
+                Rectangle {
+                    id: processRectangle
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 0
+                    height: 20
+                    color: "#ffffff"
+
+                    Text {
+                        text: parent.width > 50 ? progressBarItem.now + "/" + progressBarItem.total : ""
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: "#000000"
+                    }
+                }
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                processRectangle.width += 2
+                progressBarItem.now++
             }
         }
     }
