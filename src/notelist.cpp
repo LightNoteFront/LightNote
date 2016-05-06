@@ -92,7 +92,7 @@ void NoteList::sync()
             timeMap[brief["noteID"].toInt()] = brief["lastEditTime"].toInt();
         }
 
-        syncTotal = timeMap.size() + noteList.size() + deletedNotes.size(); // 总项数向下逼近，不再增加，不低于已处理项数
+        syncTotal = timeMap.size() + noteList.size() + deletedNotes.size() + 1; // 总项数向下逼近，不再增加，不低于已处理项数
         syncCount++;
         emit syncProgressChanged();
 
@@ -189,8 +189,9 @@ void NoteList::sync()
         for(int webId : deleted)
         {
             deletedNotes.remove(webId);
-            timeMap.remove(webId);
+            syncCount+=timeMap.remove(webId);
         }
+        emit syncProgressChanged();
 
         while(!timeMap.empty())
         {
@@ -228,7 +229,7 @@ void NoteList::sync()
 
 double NoteList::syncProgress()
 {
-    return syncTotal<=0 ? 0 : (double)syncCount/syncTotal;
+    return syncTotal<=0 ? 0 : syncCount>syncTotal ? 1 : (double)syncCount/syncTotal;
 }
 
 QStringList NoteList::getGenreList() const
