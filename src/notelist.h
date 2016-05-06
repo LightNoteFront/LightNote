@@ -16,6 +16,8 @@ class NoteList : public QObject
     Q_PROPERTY(QString filter MEMBER filter NOTIFY filterChanged)
     Q_PROPERTY(QStringList popularTags READ getPopularTags NOTIFY popularTagsChanged)
     Q_PROPERTY(QString user MEMBER currentUser NOTIFY userChanged)
+    Q_PROPERTY(bool syncStatus MEMBER syncStatus NOTIFY syncStatusChanged)
+    Q_PROPERTY(double syncProgress READ syncProgress NOTIFY syncProgressChanged)
 
 public:
 
@@ -25,6 +27,7 @@ public:
     void clear();
 
     Q_INVOKABLE void sync();
+    Q_INVOKABLE double syncProgress();
 
     Q_INVOKABLE QStringList getGenreList() const;
     Q_INVOKABLE void addGenre(QString genre);
@@ -75,6 +78,9 @@ signals:
     void loginFinished(bool success);
     void userChanged();
 
+    void syncStatusChanged();
+    void syncProgressChanged();
+
 protected slots:
 
     void setNotesChanged();
@@ -111,6 +117,10 @@ protected:
     QString currentUser;
 
     QSet<int> deletedNotes;
+
+    bool syncStatus;
+    int syncCount;
+    int syncTotal;
 
 };
 

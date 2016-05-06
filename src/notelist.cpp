@@ -14,6 +14,9 @@ NoteList::NoteList(WebRequest* request, QObject *parent)
     , emptyNote(nullptr)
     , signalEnabled(true)
     , req(request)
+    , syncStatus(false)
+    , syncCount(0)
+    , syncTotal(1)
 {
     fullLoad();
 
@@ -55,8 +58,14 @@ void NoteList::clear()
 
 void NoteList::sync()
 {
-    if(currentUser.isEmpty())
+    if(syncStatus || currentUser.isEmpty())
         return;
+
+    syncCount = 0;
+    syncTotal = 1;
+    syncStatus = true;
+    emit syncProgressChanged();
+    emit syncStatusChanged();
 
     currentNote = nullptr;
     emit currentNoteChanged();
@@ -69,7 +78,11 @@ void NoteList::sync()
     {
         qDebug() << data;
         if(data.size() == 0 || !data["result"].toBool(true))
+        {
+            syncStatus = false;
+            emit syncStatusChanged();
             return;
+        }
 
         QMap<int, int> timeMap;
         QJsonArray arr = data["array"].toArray();
@@ -78,6 +91,10 @@ void NoteList::sync()
             QJsonObject brief = arr.at(i).toObject();
             timeMap[brief["noteID"].toInt()] = brief["lastEditTime"].toInt();
         }
+
+        syncTotal = timeMap.size() + noteList.size() + deletedNotes.size(); // 总项数向下逼近，不再增加，不低于已处理项数
+        syncCount++;
+        emit syncProgressChanged();
 
         QJsonObject objUser;
         objUser["userID"] = currentUser;
@@ -91,10 +108,11 @@ void NoteList::sync()
 
             if(note->webId == -1 || !timeMap.contains(note->webId))
             {
+                qDebug() << "newing";
                 req->get("newnote", objUser, [note, &wait](const QJsonObject& data)
                 {
-                    qDebug() << "newed " << data["noteID"].toInt(-1);
                     note->webId = data["noteID"].toInt(-1);
+                    qDebug() << "newed " << note->webId;
                     QTimer::singleShot(0, &wait, SLOT(quit()));
                 });
                 wait.exec();
@@ -105,6 +123,9 @@ void NoteList::sync()
                 }
                 qDebug() << "newnote done";
             }
+
+            syncCount++;
+            emit syncProgressChanged();
 
             int webTime = timeMap.value(note->webId, 0);
             if(note->webTime < webTime)
@@ -117,7 +138,7 @@ void NoteList::sync()
                 {
                     if(data.empty() || !data["result"].toBool())
                         return;
-                    qDebug() << "downloaded " << data["noteID"].toInt(-1);
+                    qDebug() << "downloaded " << note->webId;
                     note->read(data);
                     QTimer::singleShot(0, &wait, SLOT(quit()));
                 });
@@ -134,7 +155,7 @@ void NoteList::sync()
                 qDebug() << "uploading " << objNote;
                 req->get("upload", objNote, [note, &wait](const QJsonObject& data)
                 {
-                    qDebug() << "uploaded " << data["noteID"].toInt(-1);
+                    qDebug() << "uploaded " << note->webId;
                     note->webTime = data.value("lastEditTime").toInt(note->webTime);
                     QTimer::singleShot(0, &wait, SLOT(quit()));
                 });
@@ -143,7 +164,8 @@ void NoteList::sync()
                 qDebug() << "upload done";
             }
 
-            timeMap.remove(note->webId);
+            syncCount += timeMap.remove(note->webId);
+            emit syncProgressChanged();
 
         }
 
@@ -161,6 +183,8 @@ void NoteList::sync()
                 QTimer::singleShot(0, &wait, SLOT(quit()));
             });
             wait.exec();
+            syncCount++;
+            emit syncProgressChanged();
         }
         for(int webId : deleted)
         {
@@ -185,7 +209,14 @@ void NoteList::sync()
             wait.exec();
             timeMap.remove(webId);
             qDebug() << "new download done";
+            syncCount++;
+            emit syncProgressChanged();
         }
+
+        syncCount = syncTotal;
+        syncStatus = false;
+        emit syncProgressChanged();
+        emit syncStatusChanged();
 
         qDebug() << "Done.";
 
@@ -193,6 +224,11 @@ void NoteList::sync()
 
     });
 
+}
+
+double NoteList::syncProgress()
+{
+    return syncTotal<=0 ? 0 : (double)syncCount/syncTotal;
 }
 
 QStringList NoteList::getGenreList() const
@@ -338,6 +374,8 @@ void NoteList::applyNote()
     }
     currentNote->webTime++;
     currentNote->validate();
+    if(currentNote->authorId.isEmpty() && !currentUser.isEmpty())
+        currentNote->authorId = currentUser;
     saveNote(currentNote);
     genreSet.insert(currentNote->genre);
     saveIndex();
@@ -349,6 +387,8 @@ void NoteList::applyNote(Note* note)
     if(note == nullptr)
         return;
     note->validate();
+    if(note->authorId.isEmpty() && !currentUser.isEmpty())
+        note->authorId = currentUser;
     genreSet.insert(note->genre);
     saveIndex();
     setNotesChanged();

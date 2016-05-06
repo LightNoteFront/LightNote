@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     screenScale = 0.8;
 #endif
 #ifdef Q_OS_WIN32
-    screenScale = 1.2;
+    screenScale = 1.5;
 #endif
 
     context->setContextProperty("notes", &notes);
